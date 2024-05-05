@@ -28,6 +28,9 @@ io.on('connection', (socket: Socket) => {
       socket.join(data.id)
     })
 
+    socket.on('send-audio', (data: any) => {
+      console.log(data)
+    })
     
 });
 
