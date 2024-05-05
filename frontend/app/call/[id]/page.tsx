@@ -3,6 +3,7 @@ import socket from "@/utils/Socket";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import AudioRecorder from "../audioRecorder";
+import AudioReceiver from "../audioReceiver";
 
 
 function CallPage() {
@@ -17,6 +18,7 @@ function CallPage() {
         <div className="relative py-24 h-screen">
 
             <AudioRecorder callID={id} />
+            <AudioReceiver />
 
         </div>
     )

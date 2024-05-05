@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState, useRef } from "react";
 
 
-function AudioRecorder({ callID } : { callID: string | string[] }) {
+function AudioRecorder({ callID }: { callID: string | string[] }) {
 
     const [permission, setPermission] = useState(false);
     const mediaRecorder = useRef<any>(null);
@@ -30,22 +30,16 @@ function AudioRecorder({ callID } : { callID: string | string[] }) {
     };
 
     const handleRecord = () => {
-        if (permission === false) {
-            getMicrophonePermission()
-            return;
-        }
-
+        getMicrophonePermission()
 
         if (permission === true && recordingStatus === 'inactive') {
             startRecording()
         }
         else if (permission === true)
             stopRecording()
-
     }
 
     const startRecording = async () => {
-        console.log("Recording")
         setRecordingStatus("recording");
         // @ts-ignore
         const media = new MediaRecorder(stream);
@@ -61,29 +55,36 @@ function AudioRecorder({ callID } : { callID: string | string[] }) {
     };
 
     const stopRecording = () => {
+        console.log("Stopped recording")
         setRecordingStatus("inactive");
         mediaRecorder.current.stop();
+        stream?.getAudioTracks()[0].stop()
         mediaRecorder.current.onstop = () => {
-            const audioBlob = new Blob(audioChunks);
-            const audioUrl = URL.createObjectURL(audioBlob);
+            const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+            const audioUrl = URL.createObjectURL(audioBlob)
             // @ts-ignore
             setAudio(audioUrl);
             setAudioChunks([]);
             socket.emit("send-audio", {
-                audio: audioUrl,
+                audio: audioBlob,
                 callID: callID
             })
         };
-        
-
     };
+
+    // const testTranslation = () => {
+    //     socket.emit("send-audio", {
+    //         audio: "blob",
+    //         callID: callID
+    //     })
+    // }
 
     return (
         <>
-            <button className="absolute bottom-24 left-1/2 default-btn w-max" onClick={handleRecord}>
+            <button className={`absolute bottom-24 left-1/2 default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
+                onClick={handleRecord}>
                 <Image src={'/mic.svg'} width={50} height={50} alt="microphone" />
             </button>
-            <audio src={audio} controls></audio>
         </>
     );
 };
