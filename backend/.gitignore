@@ -1,0 +1,9 @@
+
+node_modules/
+
+*.js
+src/*.js
+
+.env
+
+*.js
