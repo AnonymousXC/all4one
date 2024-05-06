@@ -33,30 +33,34 @@ io.on('connection', (socket: Socket) => {
     })
 
     socket.on('send-audio', async (data: any) => {
-      // const filePath = await saveRecording(data.audio, socket.id)
+      const filePath = await saveRecording(data.audio, socket.id, "audio")
       const translation = await openai.audio.translations.create({
-        file: fs.createReadStream('./audio/test audio.mp3'),
+        file: fs.createReadStream(filePath),
         model: 'whisper-1'
       })
 
-      // const voice = await openai.audio.speech.create({
-      //   model: 'tts-1',
-      //   voice: 'nova',
-      //   input: translation.text
-      // })
+      const voice = await openai.audio.speech.create({
+        model: 'tts-1',
+        voice: 'nova',
+        input: translation.text
+      })
 
-      // const blob = await voice.blob()
-      // console.log(blob)
-
-      console.log(translation)
+      const buffer = Buffer.from(await voice.arrayBuffer())
+      let filePathOutput = await saveRecording(buffer, socket.id + "output", "outputs")
+      filePathOutput = filePathOutput.replace('./outputs', "")
       
-      socket.broadcast.to(data.callID).emit("receive-translation",translation)
+      socket.broadcast.to(data.callID).emit("receive-translation", {filePathOutput})
 
     })
     
 });
 
 
+app.get('/audio/outputs/:file', function(req, res){
+  const file = "./outputs/" + req.params.file;
+  res.download(file);
+  console.log("hit")
+});
 
 
 server.listen(8081, () => {

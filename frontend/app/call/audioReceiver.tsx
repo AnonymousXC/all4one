@@ -1,19 +1,16 @@
 'use client'
 import socket from "@/utils/Socket";
-import { useEffect, useState } from "react";
-//import TTS from "@/server/textToVoice";
+import { useEffect, useRef, useState } from "react";
 
 
 function AudioReceiver() {
 
-    const [ message, setMessage ] = useState("")
+    const [ filePath, setFilePath  ] = useState("")
+    const audio = useRef<any>()
 
-    const recMsg = ({ text } : { text : string } ) => {
-        setMessage(text)
-        const msg = new SpeechSynthesisUtterance()
-        msg.text = text;
-        window.speechSynthesis.speak(msg)
-        // TTS({ text })
+    const recMsg = (file : any ) => {
+        setFilePath(file.filePath)
+        audio.current.load()
     }
 
     useEffect(() => {
@@ -28,7 +25,8 @@ function AudioReceiver() {
 
     return (
         <div>
-            {message}
+            <audio ref={audio} controls autoPlay src={`http://localhost:8081/audio/outputs${filePath}`}>
+            </audio>
         </div>
     )
 }
