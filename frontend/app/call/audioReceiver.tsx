@@ -1,6 +1,7 @@
 'use client'
 import socket from "@/utils/Socket";
 import { useEffect, useState } from "react";
+//import TTS from "@/server/textToVoice";
 
 
 function AudioReceiver() {
@@ -12,6 +13,7 @@ function AudioReceiver() {
         const msg = new SpeechSynthesisUtterance()
         msg.text = text;
         window.speechSynthesis.speak(msg)
+        // TTS({ text })
     }
 
     useEffect(() => {

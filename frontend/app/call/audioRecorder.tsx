@@ -72,12 +72,12 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
         };
     };
 
-    // const testTranslation = () => {
-    //     socket.emit("send-audio", {
-    //         audio: "blob",
-    //         callID: callID
-    //     })
-    // }
+    const testTranslation = () => {
+        socket.emit("send-audio", {
+            audio: "blob",
+            callID: callID
+        })
+    }
 
     return (
         <>

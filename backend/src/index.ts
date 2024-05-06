@@ -33,9 +33,9 @@ io.on('connection', (socket: Socket) => {
     })
 
     socket.on('send-audio', async (data: any) => {
-      const filePath = await saveRecording(data.audio, socket.id)
+      // const filePath = await saveRecording(data.audio, socket.id)
       const translation = await openai.audio.translations.create({
-        file: fs.createReadStream(filePath),
+        file: fs.createReadStream('./audio/test audio.mp3'),
         model: 'whisper-1'
       })
 
