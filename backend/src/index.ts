@@ -3,6 +3,7 @@ const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 const cors = require('cors')
 const fs = require('fs')
+const path = require('path')
 
 // types imports
 import { Express, Request, Response } from "express";
@@ -33,11 +34,15 @@ io.on('connection', (socket: Socket) => {
     })
 
     socket.on('send-audio', async (data: any) => {
-      const filePath = await saveRecording(data.audio, socket.id, "audio")
+      console.log("Received audio")
+      const savedAudio = await saveRecording(data.audio, socket.id, "audio")
+      console.log(savedAudio)
       const translation = await openai.audio.translations.create({
-        file: fs.createReadStream(filePath),
+        file: fs.createReadStream(savedAudio.folderPath),
         model: 'whisper-1'
       })
+
+      console.log("Translation successeded")
 
       const voice = await openai.audio.speech.create({
         model: 'tts-1',
@@ -45,11 +50,14 @@ io.on('connection', (socket: Socket) => {
         input: translation.text
       })
 
+      console.log("TTS completed")
+
       const buffer = Buffer.from(await voice.arrayBuffer())
       let filePathOutput = await saveRecording(buffer, socket.id + "output", "outputs")
-      filePathOutput = filePathOutput.replace('./outputs', "")
+
+      console.log("Saved output")
       
-      socket.broadcast.to(data.callID).emit("receive-translation", {filePathOutput})
+      socket.broadcast.to(data.callID).emit("receive-translation", { "filePath" : [filePathOutput.fileName] })
 
     })
     
@@ -57,9 +65,8 @@ io.on('connection', (socket: Socket) => {
 
 
 app.get('/audio/outputs/:file', function(req, res){
-  const file = "./outputs/" + req.params.file;
+  const file = path.join(__dirname, "../", "outputs" , req.params.file);
   res.download(file);
-  console.log("hit")
 });
 
 

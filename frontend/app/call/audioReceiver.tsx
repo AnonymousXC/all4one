@@ -10,6 +10,7 @@ function AudioReceiver() {
 
     const recMsg = (file : any ) => {
         setFilePath(file.filePath)
+        console.log(file.filePath)
         audio.current.load()
     }
 
