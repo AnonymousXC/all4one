@@ -74,7 +74,7 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
 
     const testTranslation = () => {
         socket.emit("send-audio", {
-            audio: "blob",
+            audio: "test",
             callID: callID
         })
     }
@@ -85,6 +85,11 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
                 onClick={handleRecord}>
                 <Image src={'/mic.svg'} width={50} height={50} alt="microphone" />
             </button>
+            <button className={`absolute bottom-24 left-1/2 translate-x-32 default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
+                onClick={testTranslation}>
+                Test
+            </button>
+            
         </>
     );
 };

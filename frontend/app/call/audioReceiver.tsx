@@ -9,8 +9,7 @@ function AudioReceiver() {
     const audio = useRef<any>()
 
     const recMsg = (file : any ) => {
-        setFilePath(file.filePath)
-        console.log(file.filePath)
+        setFilePath(file.filePath[0])
         audio.current.load()
     }
 
@@ -26,7 +25,7 @@ function AudioReceiver() {
 
     return (
         <div>
-            <audio ref={audio} controls autoPlay src={`http://localhost:8081/audio/outputs${filePath}`}>
+            <audio ref={audio} controls autoPlay src={`http://81.17.100.31:8081/audio/outputs${filePath}`}>
             </audio>
         </div>
     )
