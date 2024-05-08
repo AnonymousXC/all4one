@@ -68,6 +68,7 @@ io.on('connection', (socket: Socket) => {
     const buffer = Buffer.from(await voice.arrayBuffer())
     let filePathOutput = await saveRecording(buffer, socket.id + "output", "outputs")
 
+    console.log(filePathOutput)
     console.log("Saved output")
 
     socket.broadcast.to(data.callID).emit("receive-translation", { "filePath": [filePathOutput.fileName] })
@@ -79,6 +80,12 @@ io.on('connection', (socket: Socket) => {
 
 app.get('/audio/outputs/:file', function (req, res) {
   const file = path.join(__dirname, "../", "outputs", req.params.file);
+  res.download(file);
+});
+
+
+app.get('/user/audio/:file', function (req, res) {
+  const file = path.join(__dirname, "../", "audio", req.params.file);
   res.download(file);
 });
 
