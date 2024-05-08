@@ -15,7 +15,7 @@ function Home() {
   })
 
   return (
-    <main className="w-full h-screen flex justify-center items-center">
+    <main className="w-full h-screen flex justify-center items-center px-6">
       <div className="w-full max-w-[500px]">
         <div className="flex gap-3">
           <button type="button" className="default-btn" onClick={() => { joinCall(router, callID) }}>Join a Call</button>

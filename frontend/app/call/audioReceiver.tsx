@@ -25,7 +25,7 @@ function AudioReceiver() {
 
     return (
         <div>
-            <audio ref={audio} controls autoPlay src={`http://81.17.100.31:8081/audio/outputs${filePath}`}>
+            <audio ref={audio} controls autoPlay src={`https://all4one-production.up.railway.app/audio/outputs${filePath}`}>
             </audio>
         </div>
     )
