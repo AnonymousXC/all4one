@@ -19,6 +19,7 @@ const io: ServerType = new Server(server, {
     origin: 'http://localhost:3000'
   }
 });
+const port = process.env.PORT || 8081;
 
 app.use(cors())
 
@@ -78,6 +79,6 @@ app.get('/audio/outputs/:file', function(req, res){
 });
 
 
-server.listen(8081, () => {
-  console.log('server running at http://localhost:8081');
+server.listen(port, () => {
+  console.log(`server running at http://localhost:${port}`);
 });
