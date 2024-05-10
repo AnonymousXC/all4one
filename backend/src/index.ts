@@ -71,7 +71,7 @@ io.on('connection', (socket: Socket) => {
     console.log(filePathOutput)
     console.log("Saved output")
 
-    socket.broadcast.to(data.callID).emit("receive-translation", { "filePath": [filePathOutput.fileName] })
+    socket.broadcast.to(data.callID).emit("receive-translation", { "filePath": [filePathOutput.fileName], "text": translation.text })
 
   })
 

@@ -19,7 +19,7 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
                 mimeType: 'audio/wav',
                 recorderType: MediaStreamRecorder,
                 disableLogs: true,
-                timeSlice: 5100,
+                timeSlice: 3200,
                 ondataavailable: async (_blob) => {
                     const buffer = Buffer.from(await _blob.arrayBuffer())
                     socket.emit("send-audio", {
@@ -40,7 +40,7 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
         const recInterval = setInterval(async () => {
             recorder?.stopRecording()
             recorder?.startRecording()
-        }, 5000)
+        }, 3000)
         
         setIntervalVar(recInterval)
     }
