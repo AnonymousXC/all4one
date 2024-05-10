@@ -1,11 +1,82 @@
+'use client'
 import socket from "@/utils/Socket";
-import Image from "next/image";
-import { useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import { RecordRTCPromisesHandler, MediaStreamRecorder } from "recordrtc"
 
 
 function AudioRecorder({ callID }: { callID: string | string[] }) {
 
-    const [permission, setPermission] = useState(false);
+    const [recordingStatus, setRecordingStatus] = useState<'active' | 'inactive'>('inactive')
+    const [recorder, setRecorder] = useState<RecordRTCPromisesHandler>()
+    const [interval, setIntervalVar] = useState<any>()
+
+    useEffect(() => {
+
+        (async () => {
+            let stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+            let recorderLoc = new RecordRTCPromisesHandler(stream, {
+                type: 'audio',
+                mimeType: 'audio/wav',
+                recorderType: MediaStreamRecorder,
+                disableLogs: true,
+                timeSlice: 5100,
+                ondataavailable: async (_blob) => {
+                    const buffer = Buffer.from(await _blob.arrayBuffer())
+                    socket.emit("send-audio", {
+                        audio: buffer,
+                        callID: callID
+                    })
+                }
+                
+            });
+            setRecorder(recorderLoc)
+        })()
+
+    }, [])
+
+    function handleStart() {
+        setRecordingStatus('active')
+        recorder?.startRecording()
+        const recInterval = setInterval(async () => {
+            recorder?.stopRecording()
+            recorder?.startRecording()
+        }, 5000)
+        
+        setIntervalVar(recInterval)
+    }
+
+    function handleStop() {
+        recorder?.stopRecording()
+        clearInterval(interval)
+        setRecordingStatus('inactive')
+    }
+    
+
+    return (
+        <>
+            <div className="flex absolute bottom-24 left-1/2">
+                <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
+                    onClick={handleStart}>
+                    {/* <Image src={'/mic.svg'} width={50} height={50} alt="microphone" /> */}
+                    Start
+                </button>
+                <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
+                    onClick={handleStop}>
+                    {/* <Image src={'/mic.svg'} width={50} height={50} alt="microphone" /> */}
+                    Stop
+                </button>
+                <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
+                    onClick={() => { }}>
+                    Test
+                </button>
+            </div>
+
+        </>
+    );
+};
+
+/**
+ *     const [permission, setPermission] = useState(false);
     const mediaRecorder = useRef<any>(null);
     const [recordingStatus, setRecordingStatus] = useState("inactive");
     const [stream, setStream] = useState<MediaStream | null>(null);
@@ -71,28 +142,13 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
             })
         };
     };
-
-    const testTranslation = () => {
+        const handleRecord = () => {
         socket.emit("send-audio", {
             audio: "test",
             callID: callID
         })
     }
 
-    return (
-        <>
-            <button className={`absolute bottom-24 left-1/2 default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
-                onClick={handleRecord}>
-                <Image src={'/mic.svg'} width={50} height={50} alt="microphone" />
-            </button>
-            <button className={`absolute bottom-24 left-1/2 translate-x-32 default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
-                onClick={testTranslation}>
-                Test
-            </button>
-            
-        </>
-    );
-};
-
+ */
 
 export default AudioRecorder;

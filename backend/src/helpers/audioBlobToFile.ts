@@ -4,7 +4,7 @@ const path = require('path')
 
 const saveRecording = async (audioBlob: any, fileName: string, folder: string) => {
     console.log("Saving file.")
-    fileName = fileName + getTimeNow() + ".mp3"
+    fileName = fileName + getTimeNow() + ".wav"
     const folderName = path.join(__dirname, "../", "../" , folder, fileName)
     
     const writableStream = fs.createWriteStream(folderName);
