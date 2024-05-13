@@ -10,6 +10,7 @@ import { Express, Request, Response } from "express";
 import { Server as ServerType, Socket } from "socket.io";
 import saveRecording from "./helpers/audioBlobToFile";
 import openai from "./openAI";
+import { sleep } from "openai/core";
 
 // Variables
 const app: Express = express();
@@ -49,6 +50,7 @@ io.on('connection', (socket: Socket) => {
       savedAudio.folderPath = path.join(__dirname, "../", "audio", "test audio.mp3")
     console.log(savedAudio)
 
+    await sleep(1200)
 
     const translation = await openai.audio.translations.create({
       file: fs.createReadStream(savedAudio.folderPath),
@@ -56,6 +58,8 @@ io.on('connection', (socket: Socket) => {
     })
 
     console.log("Translation successeded")
+    
+    // await sleep(1200)
 
     const voice = await openai.audio.speech.create({
       model: 'tts-1',
@@ -71,7 +75,7 @@ io.on('connection', (socket: Socket) => {
     console.log(filePathOutput)
     console.log("Saved output")
 
-    socket.broadcast.to(data.callID).emit("receive-translation", { "filePath": [filePathOutput.fileName], "text": translation.text })
+    socket.broadcast.to(data.callID).emit("receive-translation", { "filePath": filePathOutput.fileName, "text": translation.text })
 
   })
 
