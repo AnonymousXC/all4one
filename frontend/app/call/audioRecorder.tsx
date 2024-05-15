@@ -8,7 +8,6 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
 
     const [recordingStatus, setRecordingStatus] = useState<'active' | 'inactive'>('inactive')
     const [recorder, setRecorder] = useState<RecordRTCPromisesHandler>()
-    const [interval, setIntervalVar] = useState<any>()
 
     useEffect(() => {
 
@@ -19,14 +18,6 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
                 mimeType: 'audio/wav',
                 recorderType: MediaStreamRecorder,
                 disableLogs: true,
-                timeSlice: 4200,
-                ondataavailable: async (_blob) => {
-                    const buffer = Buffer.from(await _blob.arrayBuffer())
-                    socket.emit("send-audio", {
-                        audio: buffer,
-                        callID: callID
-                    })
-                }
                 
             });
             setRecorder(recorderLoc)
@@ -37,17 +28,16 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
     function handleStart() {
         setRecordingStatus('active')
         recorder?.startRecording()
-        const recInterval = setInterval(async () => {
-            recorder?.stopRecording()
-            recorder?.startRecording()
-        }, 4000)
-        
-        setIntervalVar(recInterval)
     }
 
-    function handleStop() {
-        recorder?.stopRecording()
-        clearInterval(interval)
+    async function handleStop() {
+        await recorder?.stopRecording()
+        let blob = await (await recorder?.getBlob())!.arrayBuffer()
+        let buffer = Buffer.from(blob)
+        socket.emit("send-audio", {
+            audio: buffer,
+            callID: callID
+        })
         setRecordingStatus('inactive')
     }
     
@@ -57,12 +47,10 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
             <div className="flex absolute bottom-24 left-1/2">
                 <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
                     onClick={handleStart}>
-                    {/* <Image src={'/mic.svg'} width={50} height={50} alt="microphone" /> */}
                     Start
                 </button>
                 <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
                     onClick={handleStop}>
-                    {/* <Image src={'/mic.svg'} width={50} height={50} alt="microphone" /> */}
                     Stop
                 </button>
                 <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}

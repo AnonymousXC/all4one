@@ -1,4 +1,5 @@
 'use client'
+import LanguageSelector from "@/components/LanguageSelector";
 import socket from "@/utils/Socket";
 import createCall from "@/utils/createCall";
 import joinCall from "@/utils/joinCall";
@@ -24,6 +25,7 @@ function Home() {
         <div className="flex gap-3">
           <button type="button" className="default-btn flex-1" onClick={() => { createCall(router) }}>Create a new Call</button>
         </div>
+        <LanguageSelector />
       </div>
 
     </main>
