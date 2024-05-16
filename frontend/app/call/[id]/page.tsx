@@ -11,7 +11,8 @@ function CallPage() {
     const id = useParams()['id']
     
     useEffect(() => {
-        socket.emit('join-call', { id : id })
+        const languageTo = localStorage.getItem('self-language')
+        socket.emit('join-call', { id : id, languageTo })
     }, [])
 
     return (
