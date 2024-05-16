@@ -11,3 +11,5 @@ src/*.js
 *.mp3
 
 .env
+
+*.wav

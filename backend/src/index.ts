@@ -10,6 +10,7 @@ import { Express, Request, Response } from "express";
 import { Server as ServerType, Socket } from "socket.io";
 import JoinCall from "./events/JoinCall";
 import sentAudio from "./events/AudioReceive";
+import LanguageSelect from "./events/LanguageSetter";
 
 // Variables
 const app: Express = express();
@@ -36,7 +37,9 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('join-call', JoinCall)
 
-  socket.on('send-audio',sentAudio)
+  socket.on('send-audio', sentAudio)
+
+  socket.on('set-langauge', LanguageSelect)
 
 });
 
@@ -56,3 +59,5 @@ app.get('/user/audio/:file', function (req, res) {
 server.listen(port, () => {
   console.log(`server running at http://localhost:${port}`);
 });
+
+export { io }
