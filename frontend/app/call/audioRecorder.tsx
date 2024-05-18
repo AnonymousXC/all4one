@@ -53,10 +53,10 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
                     onClick={handleStop}>
                     Stop
                 </button>
-                <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
+                {/* <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
                     onClick={() => { }}>
                     Test
-                </button>
+                </button> */}
             </div>
 
         </>

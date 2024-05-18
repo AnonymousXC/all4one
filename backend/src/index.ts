@@ -50,10 +50,10 @@ app.get('/audio/outputs/:file', function (req, res) {
 });
 
 
-app.get('/user/audio/:file', function (req, res) {
-  const file = path.join(__dirname, "../", "audio", req.params.file);
-  res.download(file);
-});
+// app.get('/user/audio/:file', function (req, res) {
+//   const file = path.join(__dirname, "../", "audio", req.params.file);
+//   res.download(file);
+// });
 
 
 server.listen(port, () => {
