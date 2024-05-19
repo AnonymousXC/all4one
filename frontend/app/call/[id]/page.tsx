@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import AudioRecorder from "../audioRecorder";
 import AudioReceiver from "../audioReceiver";
+import StatsForNerds from "@/components/Stats";
 
 
 function CallPage() {
@@ -20,6 +21,7 @@ function CallPage() {
 
             <AudioRecorder callID={id} />
             <AudioReceiver />
+            <StatsForNerds />
 
         </div>
     )

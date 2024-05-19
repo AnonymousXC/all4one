@@ -2,8 +2,8 @@ const express = require('express');
 const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 const cors = require('cors')
-
 const path = require('path')
+require('dotenv').config()
 
 // types imports
 import { Express, Request, Response } from "express";
