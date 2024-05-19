@@ -32,8 +32,8 @@ function AudioReceiver() {
     }
 
     return (
-        <div>
-            <audio ref={audio} controls autoPlay src={process.env.NODE_ENV === 'development' ? `http://localhost:8081/audio/outputs${filePath[current]}` : `https://all4one-production.up.railway.app/audio/outputs${filePath[current]}`} onEnded={handleAudioEnd} onLoad={() => { console.log("Loaded") }}>
+        <div className="absolute -z-50">
+            <audio ref={audio} controls autoPlay src={process.env.NODE_ENV === 'development' ? `http://localhost:8081/audio/outputs${filePath[current]}` : `https://all4one-production.up.railway.app/audio/outputs${filePath[current]}`} onEnded={handleAudioEnd}>
             </audio>
             {
                 captions.map((el: string, idx: number) => {

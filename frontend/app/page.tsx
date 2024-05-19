@@ -27,7 +27,6 @@ function Home() {
         </div>
         <LanguageSelector />
       </div>
-
     </main>
   )
 }

@@ -4,6 +4,7 @@ const JoinCall = function (this: Socket, data : { id : string, languageTo : stri
     const socket : Socket = this;
     socket.join(data.id)
     socket.broadcast.to(data.id).emit('set-receiver-language', { receiverLanguage : [data.languageTo] })
+    socket.to(data.id).emit('new-user-joined', { language: data.languageTo, callID: data.id })
     console.log(socket.id + " joined " + data.id)
 }
 

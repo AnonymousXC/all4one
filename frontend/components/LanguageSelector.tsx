@@ -15,7 +15,7 @@ function LanguageSelector() {
 
     useEffect(() => {
         const getLanguage = localStorage.getItem('self-language')
-        if (getLanguage) {
+        if (getLanguage && getLanguage !== undefined && getLanguage !== null) {
             setLanguage(getLanguage || '')
             socket.emit('set-langauge', { language: getLanguage })
         }

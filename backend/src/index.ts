@@ -11,6 +11,7 @@ import { Server as ServerType, Socket } from "socket.io";
 import JoinCall from "./events/JoinCall";
 import sentAudio from "./events/AudioReceive";
 import LanguageSelect from "./events/LanguageSetter";
+import onDisconnect from "./events/Disconnect";
 
 // Variables
 const app: Express = express();
@@ -41,6 +42,12 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('set-langauge', LanguageSelect)
 
+  socket.on('disconnect', onDisconnect)
+
+  io.of('/').adapter.on('leave-room', (room: string, id: string) => {
+    socket.to(room).emit('room-left')
+  })
+
 });
 
 
@@ -48,12 +55,6 @@ app.get('/audio/outputs/:file', function (req, res) {
   const file = path.join(__dirname, "../", "outputs", req.params.file);
   res.download(file);
 });
-
-
-// app.get('/user/audio/:file', function (req, res) {
-//   const file = path.join(__dirname, "../", "audio", req.params.file);
-//   res.download(file);
-// });
 
 
 server.listen(port, () => {

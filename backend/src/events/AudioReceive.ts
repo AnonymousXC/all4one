@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import saveRecording from "../helpers/audioBlobToFile"
 import openai from "../openAI";
 import { io } from "..";
-import { emailLanguageMap } from "./LanguageSetter";
+import { IdLanguageMap } from "./LanguageSetter";
 import { toFile } from "openai";
 import getTimeNow from "../helpers/getTime";
 import translate from "../GCP";
@@ -20,7 +20,7 @@ const sentAudio = async function(this: Socket, data: any) {
           endUserID = val
       })
       // @ts-expect-error
-      let endUserLanguage = emailLanguageMap[endUserID]
+      let endUserLanguage = IdLanguageMap[endUserID]
       if(endUserLanguage === undefined || !endUserLanguage)
         endUserLanguage = "en"
 
