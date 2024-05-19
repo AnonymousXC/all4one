@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import AudioRecorder from "../audioRecorder";
 import AudioReceiver from "../audioReceiver";
 import StatsForNerds from "@/components/Stats";
+import LanguageModel from "@/components/LanguageModal";
 
 
 function CallPage() {
@@ -22,6 +23,7 @@ function CallPage() {
             <AudioRecorder callID={id} />
             <AudioReceiver />
             <StatsForNerds />
+            <LanguageModel />
 
         </div>
     )

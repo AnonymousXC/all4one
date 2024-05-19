@@ -44,7 +44,7 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
 
     return (
         <>
-            <div className="flex absolute bottom-24 left-1/2">
+            <div className="flex absolute bottom-24 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
                     onClick={handleStart}>
                     Start
