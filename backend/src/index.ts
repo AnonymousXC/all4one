@@ -12,6 +12,7 @@ import JoinCall from "./events/JoinCall";
 import sentAudio from "./events/AudioReceive";
 import LanguageSelect from "./events/LanguageSetter";
 import onDisconnect from "./events/Disconnect";
+import LeaveCall from "./events/LeaveCall";
 
 // Variables
 const app: Express = express();
@@ -44,11 +45,20 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('disconnect', onDisconnect)
 
-  io.of('/').adapter.on('leave-room', (room: string, id: string) => {
-    socket.to(room).emit('room-left')
-  })
+  socket.on('leave-call', LeaveCall)
 
 });
+
+
+io.of('/').adapter.on('leave-room', (room: string, id: string) => {
+  io.to(room).emit('room-left')
+})
+
+
+io.of('/').adapter.on('join-room', (room: string, id: string) => {
+  if(room.includes('voice'))
+    io.to(room).emit('new-user-joined', { callID : room.replace('voice/', ''), id })
+})
 
 
 app.get('/audio/outputs/:file', function (req, res) {

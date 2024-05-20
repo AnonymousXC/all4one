@@ -7,7 +7,10 @@ function StatsForNerds() {
 
     
     const newUserJoin = (data : any) => {
-        toast.success(`New user joined the call ${data.callID}.`)
+        if(data.id === socket.id)
+            toast.success(`You joined the call ${data.callID}`)
+        else
+            toast.success(`New user joined the call ${data.callID}.`)
     }
 
     const onUserLeave = (data : any) => {
