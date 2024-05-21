@@ -5,15 +5,18 @@ import { useEffect, useRef, useState } from "react";
 
 function AudioReceiver() {
 
-    let [ filePath, setFilePath  ] = useState<Array<string>>([])
-    const [ captions, setCaptions ] = useState<Array<string>>([])
-    const [ current, setCurrent ] = useState(0)
+    let [filePath, setFilePath] = useState<Array<string>>([])
+    const [captions, setCaptions] = useState<Array<string>>([])
+    const [current, setCurrent] = useState(0)
     const audio = useRef<HTMLAudioElement>(null)
 
-    const recMsg = (file : any ) => {
+    const recMsg = (file: any) => {
+        const blob = new Blob([file.buffer], { type: 'audio/wav' })
+        const url = URL.createObjectURL(blob)
         setCaptions(captions => [...captions, file.text])
-        setFilePath(filePath => [...filePath, file.filePath])
-        audio.current?.load()
+        setFilePath(filePath => [...filePath, url])
+        if (audio.current?.paused === true)
+            audio.current?.load()
     }
 
     useEffect(() => {
@@ -22,18 +25,23 @@ function AudioReceiver() {
 
         return () => {
             socket.off("receive-translation", recMsg)
+            filePath.forEach((el : string, idx : number) => {
+                URL.revokeObjectURL(el)
+            })
         }
 
     }, [])
 
     const handleAudioEnd = () => {
-        setCurrent(current => current + 1)
-        audio.current?.load()
+        if (filePath[current + 1]) {
+            setCurrent(current => current + 1)
+            audio.current?.load()
+        }
     }
 
     return (
         <div className="w-full px-8">
-            <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={process.env.NODE_ENV === 'development' ? `http://localhost:8081/audio/outputs${filePath[current]}` : `https://all4one-production.up.railway.app/audio/outputs${filePath[current]}`} onEnded={handleAudioEnd}>
+            <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={filePath[current]} onEnded={handleAudioEnd}>
             </audio>
             {
                 captions.map((el: string, idx: number) => {

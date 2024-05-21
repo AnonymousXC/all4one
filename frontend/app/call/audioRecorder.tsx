@@ -8,6 +8,7 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
 
     const [recordingStatus, setRecordingStatus] = useState<'active' | 'inactive'>('inactive')
     const [recorder, setRecorder] = useState<RecordRTCPromisesHandler>()
+    const [interval, setIntervalVar] = useState<any>()
 
     useEffect(() => {
 
@@ -18,6 +19,14 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
                 mimeType: 'audio/wav',
                 recorderType: MediaStreamRecorder,
                 disableLogs: true,
+                timeSlice: 4200,
+                ondataavailable: async (_blob) => {
+                    const buffer = Buffer.from(await _blob.arrayBuffer())
+                    socket.emit("send-audio", {
+                        audio: buffer,
+                        callID: callID
+                    })
+                }
                 
             });
             setRecorder(recorderLoc)
@@ -28,16 +37,17 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
     function handleStart() {
         setRecordingStatus('active')
         recorder?.startRecording()
+        const recInterval = setInterval(async () => {
+            recorder?.stopRecording()
+            recorder?.startRecording()
+        }, 4000)
+        
+        setIntervalVar(recInterval)
     }
 
-    async function handleStop() {
-        await recorder?.stopRecording()
-        let blob = await (await recorder?.getBlob())!.arrayBuffer()
-        let buffer = Buffer.from(blob)
-        socket.emit("send-audio", {
-            audio: buffer,
-            callID: callID
-        })
+    function handleStop() {
+        recorder?.stopRecording()
+        clearInterval(interval)
         setRecordingStatus('inactive')
     }
     
@@ -58,5 +68,6 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
         </>
     );
 };
+
 
 export default AudioRecorder;

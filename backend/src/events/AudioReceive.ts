@@ -53,14 +53,14 @@ const sentAudio = async function(this: Socket, data: any) {
 
 
       const buffer = Buffer.from(await voice.arrayBuffer())
-      let filePathOutput = await saveRecording(buffer, socket.id + "output", "outputs")
+      // let filePathOutput = await saveRecording(buffer, socket.id + "output", "outputs")
 
 
-      console.log(filePathOutput)
-      console.log("Saved output")
+      // console.log(filePathOutput)
+      // console.log("Saved output")
 
       
-      socket.broadcast.to(data.callID).emit("receive-translation", { "filePath": filePathOutput.fileName, "text": translation })
+      socket.broadcast.to(data.callID).emit("receive-translation", { "buffer" : buffer, "text": translation })
       io.to(data.callID).emit("processing-time", { time1: hrtTime, time2: process.hrtime(hrtTime) })
     }
     catch (err) {
