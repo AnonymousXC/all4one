@@ -1,19 +1,23 @@
 'use client'
-import { SidebarContext } from "@/contexts/SidebarContext";
-import { Menu } from "@/utils/iconsExports";
-import { useContext } from "react";
+import { Menu, X } from "@/utils/iconsExports";
+import { useState } from "react";
 
 
 function HamburgerMenuButton() {
 
-    const sidebar = useContext(SidebarContext)
+    const [sidebar, setSidebar] = useState(false)
 
     return (
         <button className="block md:hidden"
-        onClick={() => {
-            console.log(sidebar)
-        }}>
-            <Menu size={'30'} />
+            onClick={() => {
+                if (window.setSidebar && typeof window.sidebar === 'boolean') {
+                    setSidebar(!window.sidebar)
+                    window.setSidebar(!window.sidebar)
+                }
+            }}>
+            {
+                sidebar ? <X size={'30'} /> : <Menu size={'30'} />
+            }
         </button>
     )
 }

@@ -2,17 +2,25 @@
 import { usePathname } from "next/navigation";
 import Button from "./Button";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 
 function Sidebar() {
 
     const pathname = usePathname()
-    const router = useRouter() 
+    const router = useRouter()
+    const [ width, setSidebar ] = useState(false)
+    
+    if(typeof window !== 'undefined')
+        {
+            window.sidebar = width
+            window.setSidebar = setSidebar
+        }
 
     return (
         <section className={`
-                left-0 flex overflow-hidden w-0
-                fixed h-[calc(100vh_-_70px)] top-[70px]
+                left-0 flex overflow-hidden transition-all
+                fixed h-[calc(100vh_-_70px)] top-[70px] ${width ? 'w-full' : 'w-0'} w-0
                 md:relative md:max-w-[220px] md:h-screen md:top-0 md:w-full
                 bg-main-blue justify-center items-center
                 `}>

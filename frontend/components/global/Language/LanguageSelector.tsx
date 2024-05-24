@@ -36,7 +36,7 @@ function LanguageSelector() {
                 <option value="pt">Portuguese</option>
                 <option value="ja">Japanese</option>
                 <option value="ru">Russian</option>
-
+                <option value="ur">Urdu</option>
             </select>
         </>
     )

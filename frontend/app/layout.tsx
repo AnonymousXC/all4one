@@ -21,9 +21,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-      </head>
       <body className={`${roboto.className}`}>
         {children}
         <ToastContainer newestOnTop={true} position="top-center" />
