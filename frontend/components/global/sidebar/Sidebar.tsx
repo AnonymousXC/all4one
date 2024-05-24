@@ -7,10 +7,15 @@ import { useRouter } from "next/navigation";
 function Sidebar() {
 
     const pathname = usePathname()
-    const router = useRouter()
+    const router = useRouter() 
 
     return (
-        <section className="relative left-0 top-0 flex w-full max-w-[220px] h-screen bg-main-blue justify-center items-center">
+        <section className={`
+                left-0 flex overflow-hidden w-0
+                fixed h-[calc(100vh_-_70px)] top-[70px]
+                md:relative md:max-w-[220px] md:h-screen md:top-0 md:w-full
+                bg-main-blue justify-center items-center
+                `}>
             {/* <h1>Logo</h1> */}
             <div className="flex flex-col gap-8 w-full mx-3">
                 <Button image="/icons/Home.svg" active={pathname == '/user/dashboard' ? true : false} redirector={() => { router.push('/user/dashboard') }}>
@@ -25,9 +30,6 @@ function Sidebar() {
                 <Button image="/icons/Miniplayer.svg" active={pathname == '' ? true : false} redirector={() => { router.push('') }}>
                     Miniplayer
                 </Button>
-                {/* <Button image="/icons/Playback.svg" active={pathname == '' ? true : false} redirector={() => { router.push('') }}>
-                    Playback
-                </Button> */}
             </div>
         </section>
     )
