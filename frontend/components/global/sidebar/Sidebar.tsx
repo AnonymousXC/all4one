@@ -22,7 +22,7 @@ function Sidebar() {
                 left-0 flex overflow-hidden transition-all
                 fixed h-[calc(100vh_-_70px)] top-[70px] ${width ? 'w-full' : 'w-0'} w-0
                 md:relative md:max-w-[220px] md:h-screen md:top-0 md:w-full
-                bg-main-blue justify-center items-center
+                bg-[#FAFBFF] justify-center items-center
                 `}>
             {/* <h1>Logo</h1> */}
             <div className="flex flex-col gap-8 w-full mx-3">
