@@ -45,7 +45,7 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('disconnect', onDisconnect)
 
-  socket.on('leave-call', LeaveCall)
+  socket.on('leave-voice-call', LeaveCall)
 
 });
 

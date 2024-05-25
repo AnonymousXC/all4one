@@ -43,11 +43,13 @@ function AudioReceiver() {
         <div className="w-full px-8">
             <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={filePath[current]} onEnded={handleAudioEnd}>
             </audio>
-            {
-                captions.map((el: string, idx: number) => {
-                    return <p key={idx}> {el} </p>
-                })
-            }
+            <div className="w-full min-h-[350px] bg-main-purple rounded-2xl">
+                {
+                    captions.map((el: string, idx: number) => {
+                        return <p key={idx}> {el} </p>
+                    })
+                }
+            </div>
         </div>
     )
 }

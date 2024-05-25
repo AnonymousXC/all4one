@@ -3,7 +3,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 
 function createCall(router : AppRouterInstance) {
     const roomID = generateRoomID()
-    router.push('/call/' + roomID)
+    router.push('/voice/' + roomID)
     console.log(roomID)
 }
 

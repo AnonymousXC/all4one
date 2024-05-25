@@ -1,5 +1,6 @@
 'use client'
 import socket from "@/utils/Socket";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { RecordRTCPromisesHandler, MediaStreamRecorder } from "recordrtc"
 
@@ -9,6 +10,7 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
     const [recordingStatus, setRecordingStatus] = useState<'active' | 'inactive'>('inactive')
     const [recorder, setRecorder] = useState<RecordRTCPromisesHandler>()
     const [interval, setIntervalVar] = useState<any>()
+    const router = useRouter()
 
     useEffect(() => {
 
@@ -27,7 +29,7 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
                         callID: callID
                     })
                 }
-                
+
             });
             setRecorder(recorderLoc)
         })()
@@ -41,7 +43,7 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
             recorder?.stopRecording()
             recorder?.startRecording()
         }, 4000)
-        
+
         setIntervalVar(recInterval)
     }
 
@@ -50,22 +52,30 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
         clearInterval(interval)
         setRecordingStatus('inactive')
     }
-    
+
+    function endCall() {
+        socket.emit('leave-voice-call', { id : callID })
+        router.push('/user/dashboard')
+    }
+
 
     return (
-        <>
-            <div className="flex absolute bottom-24 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
-                    onClick={handleStart}>
-                    Start
-                </button>
-                <button className={`default-btn w-max ${recordingStatus === 'inactive' ? 'bg-blue-700' : 'bg-pink-700 hover:bg-pink-700'}`}
-                    onClick={handleStop}>
-                    Stop
-                </button>
-            </div>
+        <div className="flex gap-5 items-center">
+            <button className={`flex justify-center items-center w-[60px] h-[60px] ${recordingStatus === 'inactive' ? 'bg-[#222222] hover:bg-black' : 'bg-slate-600 hover:bg-slate-900'} rounded-full`}
+                onClick={() => {
+                    if(recordingStatus === 'active') 
+                        handleStop() 
+                    else
+                        handleStart()
+                }}>
+                <img src="/icons/mic.svg" height={30} width={30} className="invert" />
+            </button>
+            <button className={`bg-[#222222] hover:bg-black text-white px-6 max-h-10 h-[80px] rounded-2xl`}
+                onClick={endCall}>
+                End call
+            </button>
+        </div>
 
-        </>
     );
 };
 
