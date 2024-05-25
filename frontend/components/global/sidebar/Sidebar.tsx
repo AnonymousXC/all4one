@@ -32,7 +32,7 @@ function Sidebar() {
                 <Button image="/icons/Credit.svg" active={pathname == '/user/credits' ? true : false} redirector={() => { router.push('/user/credits') }}>
                     Credits
                 </Button>
-                <Button image="/icons/Settings video camera.svg" active={pathname == '/user/setting' ? true : false} redirector={() => { router.push('/user/setting') }}>
+                <Button image="/icons/Settings video camera.svg" active={pathname == '/user/join' ? true : false} redirector={() => { router.push('/user/join') }}>
                     Audio
                 </Button>
                 <Button image="/icons/Miniplayer.svg" active={pathname == '' ? true : false} redirector={() => { router.push('') }}>

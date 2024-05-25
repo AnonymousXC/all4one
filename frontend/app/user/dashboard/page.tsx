@@ -4,7 +4,7 @@ import CallBox from "./CallBox";
 function Dashboard() {
   return (
     <section className="flex justify-center items-center w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
-      <div className="flex flex-col justify-between w-full h-full p-8 max-w-screen-xl gap-20 md:gap-2">
+      <div className="flex flex-col justify-between w-full h-full p-8 max-w-screen-xl gap-20 md:gap-2 max-h-[700px]">
         <div className="flex flex-col gap-1">
           <h1 className="font-bold text-3xl">Dashboard</h1>
           <p className="font-bold text-base text-secondary-text">Hello Josh!</p>

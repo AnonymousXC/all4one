@@ -15,4 +15,21 @@
     audio {
         @apply opacity-0
     }
+
+    .dropdown {
+        @apply rounded-2xl bg-main-purple py-3 px-4 border-none outline-none appearance-none min-w-[230px]
+    }
+
+    .dropdown-wrapper {
+        @apply relative max-w-max
+    }
+}
+
+
+.dropdown-wrapper::after {
+    content: "›";
+    rotate: 90deg;
+    right: 1rem;
+    font-size: 2rem;
+    position: absolute;
 }
