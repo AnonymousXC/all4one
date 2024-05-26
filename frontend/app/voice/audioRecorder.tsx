@@ -1,72 +1,39 @@
 'use client'
+import TranscriptionsContext from "@/contexts/TrancriptionsContext";
+import WhisperContext from "@/contexts/WhisperContext";
 import socket from "@/utils/Socket";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { RecordRTCPromisesHandler, MediaStreamRecorder } from "recordrtc"
+import { useContext } from "react";
 
 
 function AudioRecorder({ callID }: { callID: string | string[] }) {
 
-    const [recordingStatus, setRecordingStatus] = useState<'active' | 'inactive'>('inactive')
-    const [recorder, setRecorder] = useState<RecordRTCPromisesHandler>()
-    const [interval, setIntervalVar] = useState<any>()
     const router = useRouter()
-
-    useEffect(() => {
-
-        (async () => {
-            let stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-            let recorderLoc = new RecordRTCPromisesHandler(stream, {
-                type: 'audio',
-                mimeType: 'audio/wav',
-                recorderType: MediaStreamRecorder,
-                disableLogs: true,
-                timeSlice: 4200,
-                ondataavailable: async (_blob) => {
-                    const buffer = Buffer.from(await _blob.arrayBuffer())
-                    socket.emit("send-audio", {
-                        audio: buffer,
-                        callID: callID
-                    })
-                }
-
-            });
-            setRecorder(recorderLoc)
-        })()
-
-    }, [])
-
-    function handleStart() {
-        setRecordingStatus('active')
-        recorder?.startRecording()
-        const recInterval = setInterval(async () => {
-            recorder?.stopRecording()
-            recorder?.startRecording()
-        }, 4000)
-
-        setIntervalVar(recInterval)
-    }
-
-    function handleStop() {
-        recorder?.stopRecording()
-        clearInterval(interval)
-        setRecordingStatus('inactive')
-    }
+    const {
+        recording,
+        transcript,
+        startRecording,
+        stopRecording, } = useContext(WhisperContext)
+    const { translations, setTranslations } = useContext(TranscriptionsContext)
 
     function endCall() {
-        socket.emit('leave-voice-call', { id : callID })
+        socket.emit('leave-voice-call', { id: callID })
         router.push('/user/dashboard')
     }
 
 
     return (
         <div className="flex gap-5 items-center">
-            <button className={`flex justify-center items-center w-[60px] h-[60px] ${recordingStatus === 'inactive' ? 'bg-[#222222] hover:bg-black' : 'bg-slate-600 hover:bg-slate-900'} rounded-full`}
+            <button className={`flex justify-center items-center w-[60px] h-[60px] ${recording === false ? 'bg-[#222222] hover:bg-black' : 'bg-slate-600 hover:bg-slate-900'} rounded-full`}
                 onClick={() => {
-                    if(recordingStatus === 'active') 
-                        handleStop() 
+                    if (recording === false)
+                        startRecording()
                     else
-                        handleStart()
+                    {
+                        stopRecording()
+                        socket.emit("send-audio", { "text" : transcript.text, callID })
+                        setTranslations((translations : any) => [...translations, {text : transcript.text, self: true }])
+                    }
                 }}>
                 <img src="/icons/mic.svg" height={30} width={30} className="invert" />
             </button>

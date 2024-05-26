@@ -24,7 +24,7 @@ function StatsForNerds() {
 
     useEffect(() => {
 
-        socket.on("processing-time", onProcessingTime)
+        // socket.on("processing-time", onProcessingTime)
 
         socket.on('new-user-joined', newUserJoin)
         socket.on('room-left', onUserLeave)
@@ -32,7 +32,7 @@ function StatsForNerds() {
         return () => {
             socket.off('new-user-joined', newUserJoin)
             socket.off('room-left', onUserLeave)
-            socket.off("processing-time", onProcessingTime)
+            // socket.off("processing-time", onProcessingTime)
         }
 
     }, [])
