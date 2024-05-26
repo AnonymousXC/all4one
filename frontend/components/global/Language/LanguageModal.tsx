@@ -14,7 +14,7 @@ function LanguageModel() {
         {
             setDisplay("flex")
         }
-    })
+    }, [])
 
     const handleClose = () => {
         const getLanguage = localStorage.getItem('self-language')

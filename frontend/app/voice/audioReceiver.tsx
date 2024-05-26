@@ -1,6 +1,7 @@
 'use client'
+import WhisperContext from "@/contexts/WhisperContext";
 import socket from "@/utils/Socket";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 
 function AudioReceiver() {
@@ -9,6 +10,10 @@ function AudioReceiver() {
     const [captions, setCaptions] = useState<Array<string>>([])
     const [current, setCurrent] = useState(0)
     const audio = useRef<HTMLAudioElement>(null)
+
+    const {
+        transcript,
+    } = useContext(WhisperContext)
 
     const recMsg = (file: any) => {
         const blob = new Blob([file.buffer], { type: 'audio/wav' })
@@ -45,9 +50,7 @@ function AudioReceiver() {
             </audio>
             <div className="w-full min-h-[350px] bg-main-purple rounded-2xl">
                 {
-                    captions.map((el: string, idx: number) => {
-                        return <p key={idx}> {el} </p>
-                    })
+                    transcript.text
                 }
             </div>
         </div>
