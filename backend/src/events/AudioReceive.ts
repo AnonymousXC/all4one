@@ -1,10 +1,7 @@
 import { Socket } from "socket.io";
-import saveRecording from "../helpers/audioBlobToFile"
 import openai from "../openAI";
 import { io } from "..";
 import { IdLanguageMap } from "./LanguageSetter";
-import { toFile } from "openai";
-import getTimeNow from "../helpers/getTime";
 import translate from "../GCP";
 
 const sentAudio = async function(this: Socket, data: any) {
@@ -25,21 +22,11 @@ const sentAudio = async function(this: Socket, data: any) {
       if(endUserLanguage === undefined || !endUserLanguage)
         endUserLanguage = "en"
 
-      console.log("Received audio", endUserLanguage)
+      console.log("Received text", endUserLanguage + '\n' + data.text)
 
-      const transcription = await openai.audio.transcriptions.create({
-        file: await toFile(data.audio, socket.id + getTimeNow() + ".wav"),
-        model: 'whisper-1',
-        response_format: 'json'
-      })
-
-
-      console.log("Transcription successeded : " + transcription.text)
-
-      // Translate text to any language
       
       console.log("GCP Translation begins")
-      const [translation] = await translate.translate(transcription.text, endUserLanguage);
+      const [translation] = await translate.translate(data.text, endUserLanguage);
       console.log("GCP Translation ended : " + translation)
 
       const voice = await openai.audio.speech.create({
