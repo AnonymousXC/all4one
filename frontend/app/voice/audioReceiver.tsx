@@ -3,6 +3,7 @@ import TranscriptionsContext from "@/contexts/TrancriptionsContext";
 import WhisperContext from "@/contexts/WhisperContext";
 import socket from "@/utils/Socket";
 import { useContext, useEffect, useRef, useState } from "react";
+import MessageBox from "./MessageBox";
 
 
 function AudioReceiver() {
@@ -50,10 +51,10 @@ function AudioReceiver() {
             <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={filePath[current]} onEnded={handleAudioEnd}>
             </audio>
             <div className="w-full min-h-[350px] bg-main-purple rounded-2xl relative py-4">
-                <div className="flex-1 overflow-y-auto max-h-[calc(350px-5rem)]">
+                <div className="flex flex-col gap-4 flex-1 overflow-y-auto max-h-[calc(350px-5rem)]">
                     {
                         translations.map((el: any, idx: number) => {
-                            return <p key={idx} className={`${el.self === true ? 'text-left' : 'text-right'} px-3`}> {el.self === true ? "You " : "Other "} : {el.text} </p>
+                            return <MessageBox self={el.self} text={el.text} />
                         })
                     }
                 </div>

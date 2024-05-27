@@ -32,6 +32,8 @@ function CallPage() {
     const [ translations, setTranslations ] = useState([])
 
     useEffect(() => {
+        if(socket.connected === false)
+            socket.connect()
         const languageTo = localStorage.getItem('self-language')
         setUserLanguage(languageTo || 'en')
         socket.emit('join-call', { id: id, languageTo })
