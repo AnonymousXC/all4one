@@ -1,6 +1,7 @@
 'use client'
 import socket from '@/utils/Socket';
 import createCall from '@/utils/createCall';
+import createVideoCall from '@/utils/createVideoCall';
 import { PhoneCall } from '@/utils/iconsExports'
 import joinCall from '@/utils/joinCall';
 import { useRouter } from 'next/navigation';
@@ -35,7 +36,10 @@ function CallJoining() {
                         }}>
                             Create voice call
                         </button>
-                        <button className='py-3 hover:bg-slate-900 hover:text-white transition-colors'>
+                        <button className='py-3 hover:bg-slate-900 hover:text-white transition-colors'
+                        onClick={() => {
+                            createVideoCall(router)
+                        }}>
                             Create video call
                         </button>
                     </div>
