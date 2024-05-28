@@ -13,6 +13,7 @@ import sentAudio from "./events/AudioReceive";
 import LanguageSelect from "./events/LanguageSetter";
 import onDisconnect from "./events/Disconnect";
 import LeaveCall from "./events/LeaveCall";
+import joinVideoCall from "./events/video/joinVideoCall";
 
 // Variables
 const app: Express = express();
@@ -47,6 +48,8 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('leave-voice-call', LeaveCall)
 
+  socket.on('join-video', joinVideoCall)
+
 });
 
 
@@ -58,13 +61,9 @@ io.of('/').adapter.on('leave-room', (room: string, id: string) => {
 io.of('/').adapter.on('join-room', (room: string, id: string) => {
   if(room.includes('voice'))
     io.to(room).emit('new-user-joined', { callID : room.replace('voice/', ''), id })
+  if(room.includes('video'))
+    io.to(room).emit('new-video-user', { userID: id })
 })
-
-
-app.get('/audio/outputs/:file', function (req, res) {
-  const file = path.join(__dirname, "../", "outputs", req.params.file);
-  res.download(file);
-});
 
 
 server.listen(port, () => {

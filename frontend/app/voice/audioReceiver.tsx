@@ -53,6 +53,7 @@ function AudioReceiver() {
             <div className="w-full min-h-[350px] bg-main-purple rounded-2xl relative py-4">
                 <div className="flex flex-col gap-4 flex-1 overflow-y-auto max-h-[calc(350px-5rem)]">
                     {
+                        translations &&
                         translations.map((el: any, idx: number) => {
                             return <MessageBox self={el.self} text={el.text} key={idx} />
                         })
