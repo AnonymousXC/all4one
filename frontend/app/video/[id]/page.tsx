@@ -37,24 +37,34 @@ function VideoCall() {
 
 
     useEffect(() => {
-        if (socket.connected === false)
-            socket.connect()
-        
-        const peerLoc = new Peer(socket.id || 'retry')
+        socket.connect()
 
-        peerLoc.on('open', (id : string) => {
-            setPeer(peerLoc)
+        let peerLoc: Peer
+
+        socket.once('connect', () => {
+
+            peerLoc = new Peer(socket.id || 'retry')
+
+            peerLoc.on('open', (userId: string) => {
+                setPeer(peerLoc)
+                socket.emit('join-video', { id })
+            })
+
+            socket.emit('join-call', { id: id })
+
+            recieveCall(peerLoc)
+
         })
 
-        socket.emit('join-video', { id })
-        socket.emit('join-call', { id: id })
-        
-        recieveCall(peerLoc)
-        
         socket.on('new-video-user', ({ userID }: { userID: string }) => {
             if (userID === peerLoc?.id) return
             setSecondUser(userID)
         })
+
+        return () => {
+            socket.disconnect()
+        }
+
 
     }, [])
 
@@ -76,7 +86,7 @@ function VideoCall() {
     }
 
     function recieveCall(peer: Peer) {
-        peer.on('call', function (call : MediaConnection) {
+        peer.on('call', function (call: MediaConnection) {
             // @ts-expect-error
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             getUserMedia({ video: true, audio: false }, function (stream: any) {
@@ -114,7 +124,7 @@ function VideoCall() {
                 <video src="" ref={otherVideo}></video>
             </div>
             <button onClick={() => {
-            makeVideoCall(secondUser)
+                makeVideoCall(secondUser)
             }}>Call</button>
         </PeerContext.Provider>
     )

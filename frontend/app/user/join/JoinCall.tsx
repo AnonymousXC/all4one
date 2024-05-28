@@ -13,9 +13,6 @@ function CallJoining() {
     const [ callID, setCallID ] = useState("")
     const router = useRouter()
 
-    useEffect(() => {
-        socket.connect()
-    }, [])
 
     return (
         <>

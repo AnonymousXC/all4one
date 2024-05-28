@@ -9,7 +9,6 @@ function LanguageModel() {
 
     useEffect(() => {
         const getLanguage = localStorage.getItem('self-language')
-        console.log(getLanguage)
         if(!getLanguage)
         {
             setDisplay("flex")

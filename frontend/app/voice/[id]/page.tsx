@@ -32,16 +32,19 @@ function CallPage() {
     const [ translations, setTranslations ] = useState([])
 
     useEffect(() => {
-        if(socket.connected === false)
-            socket.connect()
-        const languageTo = localStorage.getItem('self-language')
-        setUserLanguage(languageTo || 'en')
-        socket.emit('join-call', { id: id, languageTo })
+        socket.connect()
 
+        socket.once('connect', () => {
+            const languageTo = localStorage.getItem('self-language')
+            setUserLanguage(languageTo || 'en')
+            socket.emit('join-call', { id: id, languageTo })
+        })
+        
         var timer = setInterval(() => setDate(new Date()), 1000)
 
         return () => {
             clearInterval(timer)
+            socket.disconnect()
         }
 
     }, [])
