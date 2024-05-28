@@ -1,6 +1,4 @@
 'use client'
-import AudioReceiver from "@/app/voice/audioReceiver";
-import AudioRecorder from "@/app/voice/audioRecorder";
 import LanguageModel from "@/components/global/Language/LanguageModal";
 import NavBar2 from "@/components/global/navbar/Navigationbar2";
 import PeerContext from "@/contexts/PeerContext";
@@ -9,14 +7,17 @@ import WhisperContext from "@/contexts/WhisperContext";
 import socket from "@/utils/Socket";
 import useWhisper from "@octoai/use-whisper";
 import { useParams } from "next/navigation";
-import Peer, { MediaConnection } from "peerjs";
+import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
+import VideoAudioRecorder from "../VidAudioRecorder";
+import VideoReceiver from "../VideoReceiver";
+import { makeVideoCall, receiveCall } from "../CallFunctions";
 
 
 function VideoCall() {
 
     const [peer, setPeer] = useState<Peer>()
-    const [secondUser, setSecondUser] = useState<string>("")
+    const [secondUser, setSecondUser] = useState<string | null>(null)
     const id = useParams().id
     const [translations, setTranslations] = useState([])
     const selfVideo = useRef<any>()
@@ -52,7 +53,7 @@ function VideoCall() {
 
             socket.emit('join-call', { id: id })
 
-            recieveCall(peerLoc)
+            receiveCall(peerLoc, selfVideo, otherVideo)
 
         })
 
@@ -69,63 +70,31 @@ function VideoCall() {
     }, [])
 
 
-    function makeVideoCall(userID: string) {
-        // @ts-expect-error
-        var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        getUserMedia({ video: true, audio: false }, function (stream: any) {
-            selfVideo.current.srcObject = stream;
-            selfVideo.current.play()
-            var call = peer?.call(userID, stream);
-            call?.on('stream', function (remoteStream) {
-                otherVideo.current.srcObject = remoteStream
-                otherVideo.current?.play()
-            });
-        }, function (err: any) {
-            console.log('Failed to get local stream', err);
-        });
-    }
-
-    function recieveCall(peer: Peer) {
-        peer.on('call', function (call: MediaConnection) {
-            // @ts-expect-error
-            var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-            getUserMedia({ video: true, audio: false }, function (stream: any) {
-                selfVideo.current.srcObject = stream;
-                selfVideo.current?.play()
-                call.answer(stream); // Answer the call with an A/V stream.
-                call.on('stream', function (remoteStream) {
-                    otherVideo.current.srcObject = remoteStream
-                    otherVideo.current?.play()
-                });
-            }, function (err: any) {
-                console.log('Failed to get local stream', err);
-            });
-        });
-    }
-
     return (
         <PeerContext.Provider value={peer}>
             <WhisperContext.Provider value={whisper}>
                 <TranscriptionsContext.Provider value={{ translations, setTranslations }}>
                     <NavBar2 />
-                    Your Peer id : {peer?.id} <br />
-                    Receiver&apos;s peer id : {secondUser}
-                    <AudioReceiver />
-                    <AudioRecorder callID={id} />
-                    <LanguageModel />
+                    <section className="flex justify-center items-center flex-col w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
+                        <div className="flex flex-col justify-between w-full h-full p-8 max-w-screen-xl gap-20 md:gap-2">
+
+                            <div className="w-full md:mx-6">
+                                <div className="bg-[#FBFBFB] border border-[rgba(0, 0, 0, 0.1)] rounded-2xl px-6 py-6 flex items-center flex-col gap-8">
+                                    <div className="flex w-full justify-between">
+                                        <h3 className="text-xl font-bold">Good evening!</h3>
+                                        {/* <p> {date.toLocaleTimeString()} </p> */}
+                                    </div>
+                                    <VideoReceiver selfVideoRef={selfVideo} receiverVideoRef={otherVideo} />
+                                    <VideoAudioRecorder callID={id} receiverID={secondUser} connectionFunc={() => {
+                                        makeVideoCall(typeof peer === "undefined" ? new Peer() : peer, secondUser || "", selfVideo, otherVideo, )
+                                    }} />
+                                </div>
+                            </div>
+                        </div>
+                        <LanguageModel />
+                    </section>
                 </TranscriptionsContext.Provider>
             </WhisperContext.Provider>
-            <div>
-                self
-                <video src="" ref={selfVideo}></video>
-            </div>
-            <div>
-                other
-                <video src="" ref={otherVideo}></video>
-            </div>
-            <button onClick={() => {
-                makeVideoCall(secondUser)
-            }}>Call</button>
         </PeerContext.Provider>
     )
 }

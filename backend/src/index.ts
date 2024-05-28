@@ -10,7 +10,7 @@ import { Express, Request, Response } from "express";
 import { Server as ServerType, Socket } from "socket.io";
 import JoinCall from "./events/JoinCall";
 import sentAudio from "./events/AudioReceive";
-import LanguageSelect from "./events/LanguageSetter";
+import LanguageSelect, { IdLanguageMap } from "./events/LanguageSetter";
 import onDisconnect from "./events/Disconnect";
 import LeaveCall from "./events/LeaveCall";
 import joinVideoCall from "./events/video/joinVideoCall";
@@ -62,7 +62,12 @@ io.of('/').adapter.on('join-room', (room: string, id: string) => {
   if(room.includes('voice'))
     io.to(room).emit('new-user-joined', { callID : room.replace('voice/', ''), id })
   if(room.includes('video'))
-    io.to(room).emit('new-video-user', { userID: id })
+  {
+    // @ts-expect-error
+    const lang = IdLanguageMap[id]
+    io.to(room).emit('new-video-user', { userID: id, lang })
+
+  }
 })
 
 
