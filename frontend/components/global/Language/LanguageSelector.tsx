@@ -1,17 +1,21 @@
 'use client'
 import socket from "@/utils/Socket";
+import { usePathname } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
 
 function LanguageSelector() {
 
     const [language, setLanguage] = useState("")
+    const pathname = usePathname()
 
     const handleLanguageChange = (e: FormEvent<HTMLSelectElement>) => {
         const languageSelected = e.currentTarget.value
         localStorage.setItem('self-language', languageSelected)
         setLanguage(languageSelected)
         socket.emit('set-langauge', { language: languageSelected })
+        if(pathname === "/user/join") return
+        window.location.reload()
     }
 
     useEffect(() => {

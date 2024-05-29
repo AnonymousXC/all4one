@@ -4,6 +4,7 @@ import createCall from '@/utils/createCall';
 import createVideoCall from '@/utils/createVideoCall';
 import { PhoneCall } from '@/utils/iconsExports'
 import joinCall from '@/utils/joinCall';
+import joinVideoCall from '@/utils/joinVideoCall';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -50,14 +51,20 @@ function CallJoining() {
                 </div>
                 <div>
                     <label htmlFor="code" className="block md:hidden mb-2 text-base font-medium mt-4">Meeting code</label>
-                    <div className="flex">
-                        <input type="text" className="dropdown" placeholder="Enter the code" onChange={(e) => {
+                    <div className="flex flex-col gap-4 md:flex-row">
+                        <input type="text" className="dropdown max-h-12" placeholder="Enter the code" onChange={(e) => {
                             setCallID(e.currentTarget.value)
                         }} />
-                        <button className="text-[#8C8C8C] px-8 hover:text-black" 
-                        onClick={() => {
-                            joinCall(router, callID)
-                        }}>Join</button>
+                            <div className="flex justify-around">
+                                <button className="text-[#8C8C8C] px-8 hover:text-black" 
+                                onClick={() => {
+                                    joinCall(router, callID)
+                                }}>Join voice call</button>
+                                <button className="text-[#8C8C8C] px-8 hover:text-black" 
+                                onClick={() => {
+                                    joinVideoCall(router, callID)
+                                }}>Join video call</button>
+                            </div>
                     </div>
                 </div>
             </div>
