@@ -15,8 +15,10 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
     let [filePath, setFilePath] = useState<Array<string>>([])
     const [current, setCurrent] = useState(0)
     const audio = useRef<HTMLAudioElement>(null)
-    const [ selfLanguage, setSelfLanguage ] = useState<string | null>(null)
-    const [ receiverLanguage, setReceiverLanguage ] = useState<string | null>(null)
+    const [ selfServerLang, setSelfServerLang ] = useState<string>("Waiting for user...")
+    const [ receiverServerLang, setReceiverServerLang ] = useState<string>("Waiting for user...")
+    const [ lastTranslation, setLastTranslation ] = useState("")
+
 
     const {
         transcript,
@@ -27,26 +29,32 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
         const blob = new Blob([file.buffer], { type: 'audio/wav' })
         const url = URL.createObjectURL(blob)
         setTranslations((translations: any) => [...translations, { text: file.text, self: false }])
+        setLastTranslation(file.text)
         setFilePath(filePath => [...filePath, url])
         if (audio.current?.paused === true)
             audio.current?.load()
     }
 
+    const newVideoUserJoin = ({ userID, lang }: { userID: string, lang : any }) => {
+        Object.keys(lang).forEach((el) => {
+            if(el === socket.id)
+                // @ts-expect-error
+                setSelfServerLang(languages[lang[el]])
+            else
+                // @ts-expect-error
+                setReceiverServerLang(languages[lang[el]])
+        })
+    }
+
     useEffect(() => {
 
         socket.on("receive-translation", recMsg)
-        const selfLang = localStorage.getItem("self-language")
-        // @ts-expect-error
-        setSelfLanguage(languages[selfLang])
 
-        socket.on('new-video-user', ({ userID, lang }: { userID: string, lang : string }) => {
-            if(userID === socket.id) return;
-            // @ts-expect-error
-            setReceiverLanguage(languages[lang])
-        })
+        socket.on('new-video-user', newVideoUserJoin)
 
         return () => {
             socket.off("receive-translation", recMsg)
+            socket.off('new-video-user', newVideoUserJoin)
             filePath.forEach((el: string, idx: number) => {
                 URL.revokeObjectURL(el)
             })
@@ -65,13 +73,19 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
         <div className="flex justify-around w-full px-8 flex-wrap gap-4">
             <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={filePath[current]} onEnded={handleAudioEnd}>
             </audio>
-            <div className="flex flex-col max-w-[450px] max-h-[350px] w-full h-screen">
-                <video src="" ref={selfVideoRef} className=" bg-main-purple w-full h-full rounded-2xl"></video>
-                <p className="mt-4 bg-main-purple py-2 px-6 rounded-2xl max-w-[200px]"> {selfLanguage === null ? "Select a language" : selfLanguage} </p>
+            <div className="flex flex-col max-w-[450px] w-full">
+                <video src="" ref={selfVideoRef} className=" bg-main-purple w-full h-full rounded-2xl  max-h-[340px]"></video>
+                <p className="mt-4 bg-main-purple py-2 px-6 rounded-2xl max-w-[200px]"> {selfServerLang} </p>
+                <p className="mt-4">
+                    You : { transcript.text }
+                </p>
             </div>
-            <div className="flex flex-col max-w-[450px] max-h-[350px] w-full h-screen">
-                <video src="" ref={receiverVideoRef} className="bg-main-purple w-full h-full rounded-2xl"></video>
-                <p className="mt-4 bg-[#362360] py-2 px-6 rounded-2xl max-w-[200px] text-white"> {receiverLanguage === null ? "Waiting for user" : receiverLanguage } </p>
+            <div className="flex flex-col max-w-[450px] w-full">
+                <video src="" ref={receiverVideoRef} className="bg-main-purple w-full h-full rounded-2xl max-h-[340px]"></video>
+                <p className="mt-4 bg-[#362360] py-2 px-6 rounded-2xl max-w-[200px] text-white"> {receiverServerLang} </p>
+                <p className="mt-4">
+                    Other : {lastTranslation}
+                </p>
             </div>
         </div>
     )

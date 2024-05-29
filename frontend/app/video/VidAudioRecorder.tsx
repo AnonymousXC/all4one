@@ -3,7 +3,7 @@ import TranscriptionsContext from "@/contexts/TrancriptionsContext";
 import WhisperContext from "@/contexts/WhisperContext";
 import socket from "@/utils/Socket";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Camera } from "@/utils/iconsExports"
 import { toast } from "react-toastify";
 
@@ -23,11 +23,21 @@ function VideoAudioRecorder({ callID , connectionFunc, receiverID} : Props) {
         stopRecording, } = useContext(WhisperContext)
     const { setTranslations } = useContext(TranscriptionsContext)
     const [ isConnectionMade, setConnection ] = useState(false)
+    const [ isReceiver, setIsReceiver ] = useState(true)
 
     function endCall() {
         socket.emit('leave-voice-call', { id: callID })
         router.push('/user/dashboard')
     }
+
+    useEffect(() => {
+        socket.once('new-video-user', ({ userID, lang }: { userID: string, lang : any }) => {
+            if(Object.keys(lang).length > 1)
+                setIsReceiver(true)
+            else
+                setIsReceiver(false)
+        })
+    }, [])
 
 
     return (
@@ -47,7 +57,7 @@ function VideoAudioRecorder({ callID , connectionFunc, receiverID} : Props) {
             </button>
             <button className={`bg-[#222222] hover:bg-black text-white px-6 max-h-10 h-[80px] rounded-2xl`}
                 onClick={() => {
-                    if(isConnectionMade === false)
+                    if(isConnectionMade === false && isReceiver === false)
                         {
                             if(receiverID === null || !receiverID) {
                                 toast.error("No user found to call")
@@ -60,7 +70,7 @@ function VideoAudioRecorder({ callID , connectionFunc, receiverID} : Props) {
                         endCall()
                 }}>
                 {
-                    isConnectionMade === false ? "Connect" : "End call"
+                    isReceiver === false && isConnectionMade === false ? "Connect" : "End call"
                 }
             </button>
             <button className={`flex justify-center items-center w-[60px] h-[60px] bg-black rounded-full`}>
