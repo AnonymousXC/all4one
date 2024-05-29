@@ -28,11 +28,16 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
     const recMsg = (file: any) => {
         const blob = new Blob([file.buffer], { type: 'audio/wav' })
         const url = URL.createObjectURL(blob)
-        setTranslations((translations: any) => [...translations, { text: file.text, self: false }])
+        if(audio.current)
+            {
+                audio.current.src = url
+                audio.current.play()
+            }
+        // setTranslations((translations: any) => [...translations, { text: file.text, self: false }])
         setLastTranslation(file.text)
-        setFilePath(filePath => [...filePath, url])
-        if (audio.current?.paused === true)
-            audio.current?.load()
+        // setFilePath(filePath => [...filePath, url])
+        // if (audio.current?.paused === true)
+            // audio.current?.load()
     }
 
     const newVideoUserJoin = ({ userID, lang }: { userID: string, lang : any }) => {
@@ -62,16 +67,16 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
 
     }, [])
 
-    const handleAudioEnd = () => {
-        if (filePath[current + 1]) {
-            setCurrent(current => current + 1)
-            audio.current?.load()
-        }
-    }
+    // const handleAudioEnd = () => {
+    //     if (filePath[current + 1]) {
+    //         setCurrent(current => current + 1)
+    //         audio.current?.load()
+    //     }
+    // }
 
     return (
         <div className="flex justify-around w-full px-8 flex-wrap gap-4">
-            <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={filePath[current]} onEnded={handleAudioEnd}>
+            <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={filePath[current]}>
             </audio>
             <div className="flex flex-col max-w-[450px] w-full">
                 <video src="" ref={selfVideoRef} className=" bg-main-purple w-full h-full rounded-2xl  max-h-[340px]"></video>

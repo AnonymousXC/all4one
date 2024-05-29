@@ -22,6 +22,7 @@ function VideoCall() {
     const [translations, setTranslations] = useState([])
     const selfVideo = useRef<any>()
     const otherVideo = useRef<any>()
+    const [ whisperLanguage, setWhisperLanguage ] = useState("en")
 
     const whisper = useWhisper(
         {
@@ -31,7 +32,7 @@ function VideoCall() {
             removeSilence: true,
             streaming: true,
             whisperConfig: {
-                language: "en"
+                language: whisperLanguage
             }
         }
     )
@@ -43,6 +44,9 @@ function VideoCall() {
         let peerLoc: Peer
 
         socket.once('connect', () => {
+
+            const languageTo = localStorage.getItem('self-language')
+            setWhisperLanguage(languageTo || 'en')
 
             peerLoc = new Peer(socket.id || 'retry')
 
