@@ -3,8 +3,15 @@ import openai from "../openAI";
 import { io } from "..";
 import { IdLanguageMap } from "./LanguageSetter";
 import translate from "../GCP";
+import { toFile } from "openai";
+import getTimeNow from "../helpers/getTime";
 
-const sentAudio = async function(this: Socket, data: any) {
+interface FrontendData {
+  audio: Buffer,
+  callID: string
+}
+
+const sentAudio = async function(this: Socket, data: FrontendData) {
 
     const socket = this;
     const hrtTime = process.hrtime()
@@ -22,11 +29,21 @@ const sentAudio = async function(this: Socket, data: any) {
       if(endUserLanguage === undefined || !endUserLanguage)
         endUserLanguage = "en"
 
-      console.log("Received text", endUserLanguage + '\n' + data.text)
+      console.log("Received audio", endUserLanguage)
+
+      const transcription = await openai.audio.transcriptions.create({
+        file: await toFile(data.audio, socket.id + getTimeNow() + ".wav"),
+        model: 'whisper-1',
+        response_format: 'json'
+      })
+
+      io.to(data.callID).emit("receive-transcription", { "text": transcription.text, "id" : socket.id })
+
+      console.log("Transcription successeded : " + transcription.text)
 
       
       console.log("GCP Translation begins")
-      const [translation] = await translate.translate(data.text, endUserLanguage);
+      const [translation] = await translate.translate(transcription.text, endUserLanguage);
       console.log("GCP Translation ended : " + translation)
 
       const voice = await openai.audio.speech.create({
@@ -40,14 +57,8 @@ const sentAudio = async function(this: Socket, data: any) {
 
 
       const buffer = Buffer.from(await voice.arrayBuffer())
-      // let filePathOutput = await saveRecording(buffer, socket.id + "output", "outputs")
-
-
-      // console.log(filePathOutput)
-      // console.log("Saved output")
-
       
-      socket.broadcast.to(data.callID).emit("receive-translation", { "buffer" : buffer, "text": translation })
+      socket.to(data.callID).emit("receive-translation", { "buffer" : buffer, "text": translation, "id" : socket.id })
       io.to(data.callID).emit("processing-time", { time1: hrtTime, time2: process.hrtime(hrtTime) })
     }
     catch (err) {
