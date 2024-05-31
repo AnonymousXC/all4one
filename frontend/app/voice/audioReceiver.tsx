@@ -59,7 +59,7 @@ function AudioReceiver() {
 
         socket.on("receive-translation", recMsg)
         socket.on("receive-transcription", receiveTransciption)
-        socket.on('new-video-user', newVideoUserJoin)
+        socket.on('new-user-joined', newVideoUserJoin)
 
 
         return () => {

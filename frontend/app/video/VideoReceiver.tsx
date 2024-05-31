@@ -10,39 +10,55 @@ type Props = {
     receiverVideoRef: any,
 }
 
+interface Captions {
+    text: string,
+    id: string
+}
+
+interface SocketData {
+    buffer: Buffer,
+    text: string,
+    id: string,
+}
+
+interface TransciptionData {
+    text: string,
+    id: string
+}
+
 function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
 
-    let [filePath, setFilePath] = useState<Array<string>>([])
+    let [blobURL, setBlobURL] = useState<Array<string>>([])
     const [current, setCurrent] = useState(0)
+    const [captions, setCaptions] = useState<Array<Captions>>([])
     const audio = useRef<HTMLAudioElement>(null)
-    const [ selfServerLang, setSelfServerLang ] = useState<string>("Waiting for user...")
-    const [ receiverServerLang, setReceiverServerLang ] = useState<string>("Waiting for user...")
-    const [ lastTranslation, setLastTranslation ] = useState("")
+    const [selfServerLang, setSelfServerLang] = useState<string>("Waiting for user...")
+    const [receiverServerLang, setReceiverServerLang] = useState<string>("Waiting for user...")
+    const [lastTranslation, setLastTranslation] = useState("")
+    const [lastTranscription, setLastTranscription] = useState("")
 
 
-    const {
-        transcript,
-    } = useContext(WhisperContext)
-    const { translations, setTranslations } = useContext(TranscriptionsContext)
-
-    const recMsg = (file: any) => {
-        const blob = new Blob([file.buffer], { type: 'audio/wav' })
+    const recMsg = (data: SocketData) => {
+        setCaptions(captions => [...captions, { text: data.text, id: data.id }])
+        const blob = new Blob([data.buffer], { type: 'audio/wav' })
         const url = URL.createObjectURL(blob)
-        if(audio.current)
-            {
-                audio.current.src = url
-                audio.current.play()
-            }
-        // setTranslations((translations: any) => [...translations, { text: file.text, self: false }])
-        setLastTranslation(file.text)
-        // setFilePath(filePath => [...filePath, url])
-        // if (audio.current?.paused === true)
-            // audio.current?.load()
+        setBlobURL(blobURL => [...blobURL, url])
+        if (audio.current?.paused === true && current === 0)
+            audio.current?.load()
+        setLastTranslation(data.text)
     }
 
-    const newVideoUserJoin = ({ userID, lang }: { userID: string, lang : any }) => {
+    const receiveTransciption = (data: TransciptionData) => {
+        if (data.id === socket.id)
+            {
+                setLastTranscription(data.text)
+                setCaptions(captions => [...captions, { text: data.text, id: data.id }])
+            }
+    }
+
+    const newVideoUserJoin = ({ userID, lang }: { userID: string, lang: any }) => {
         Object.keys(lang).forEach((el) => {
-            if(el === socket.id)
+            if (el === socket.id)
                 // @ts-expect-error
                 setSelfServerLang(languages[lang[el]])
             else
@@ -54,40 +70,43 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
     useEffect(() => {
 
         socket.on("receive-translation", recMsg)
-
-        socket.on('new-video-user', newVideoUserJoin)
+        socket.on("receive-transcription", receiveTransciption)
+        socket.on('new-user-joined', newVideoUserJoin)
 
         return () => {
             socket.off("receive-translation", recMsg)
             socket.off('new-video-user', newVideoUserJoin)
-            filePath.forEach((el: string, idx: number) => {
+            socket.off("receive-transcription", receiveTransciption)
+            blobURL.forEach((el: string, idx: number) => {
                 URL.revokeObjectURL(el)
             })
         }
 
     }, [])
 
-    // const handleAudioEnd = () => {
-    //     if (filePath[current + 1]) {
-    //         setCurrent(current => current + 1)
-    //         audio.current?.load()
-    //     }
-    // }
+    const handleAudioEnd = () => {
+        if (blobURL[current + 1]) {
+            setCurrent(current => current + 1)
+            audio.current?.load()
+        }
+        else
+            setCurrent(current => current + 1)
+    }
 
     return (
         <div className="flex justify-around w-full px-8 flex-wrap gap-4">
-            <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={filePath[current]}>
+            <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={blobURL[current]} onEnded={handleAudioEnd}>
             </audio>
             <div className="flex flex-col max-w-[450px] w-full">
                 <video src="" ref={selfVideoRef} className=" bg-main-purple w-full h-full rounded-2xl  max-h-[340px]"></video>
                 <p className="mt-4 bg-main-purple py-2 px-6 rounded-2xl max-w-[200px]"> {selfServerLang} </p>
                 <p className="mt-4">
-                    You : { transcript.text }
+                    You : {lastTranscription}
                 </p>
             </div>
             <div className="flex flex-col max-w-[450px] w-full">
                 <video src="" ref={receiverVideoRef} className="bg-main-purple w-full h-full rounded-2xl max-h-[340px]"></video>
-                <p className="mt-4 bg-[#362360] py-2 px-6 rounded-2xl max-w-[200px] text-white"> {receiverServerLang} </p>
+                <p className="mt-4 bg-main-purple py-2 px-6 rounded-2xl max-w-[200px]"> {receiverServerLang} </p>
                 <p className="mt-4">
                     Other : {lastTranslation}
                 </p>

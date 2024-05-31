@@ -66,8 +66,8 @@ io.of('/').adapter.on('join-room', (room: string, id: string) => {
     const userLang = IdLanguageMap[el]
     lang[el] = userLang
   })
-  io.to(room).emit('new-user-joined', { callID: room.replace('voice/', ''), id, lang })
-  io.to(room).emit('new-video-user', { userID: id, lang })
+  if(room.includes('voice') || room.includes('video'))
+    io.to(room).emit('new-user-joined', { callID: room.replace('voice/', ''), id, lang })
 })
 
 

@@ -4,8 +4,10 @@ import WhisperContext from "@/contexts/WhisperContext";
 import socket from "@/utils/Socket";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import { Camera } from "@/utils/iconsExports"
+import { Camera, Microphone } from "@/utils/iconsExports"
 import { toast } from "react-toastify";
+import { MediaStreamRecorder, RecordRTCPromisesHandler } from "recordrtc";
+import { CameraOff, MicrophoneOff } from "@styled-icons/boxicons-regular";
 
 type Props = {
     callID: string | string[],
@@ -13,26 +15,66 @@ type Props = {
     receiverID: string | null
 }
 
-function VideoAudioRecorder({ callID , connectionFunc, receiverID} : Props) {
+function VideoAudioRecorder({ callID, connectionFunc, receiverID }: Props) {
 
+    const [recordingStatus, setRecordingStatus] = useState<'active' | 'inactive'>('inactive')
+    const [recorder, setRecorder] = useState<RecordRTCPromisesHandler>()
+    const [interval, setIntervalVar] = useState<any>()
+    const [isConnectionMade, setConnection] = useState(false)
+    const [isReceiver, setIsReceiver] = useState(true)
+    const [camera, setCamera] = useState(false)
     const router = useRouter()
-    const {
-        recording,
-        transcript,
-        startRecording,
-        stopRecording, } = useContext(WhisperContext)
-    const { setTranslations } = useContext(TranscriptionsContext)
-    const [ isConnectionMade, setConnection ] = useState(false)
-    const [ isReceiver, setIsReceiver ] = useState(true)
+
+    useEffect(() => {
+
+        (async () => {
+            let stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+            let recorderLoc = new RecordRTCPromisesHandler(stream, {
+                type: 'audio',
+                mimeType: 'audio/wav',
+                recorderType: MediaStreamRecorder,
+                disableLogs: true,
+                timeSlice: 15200,
+                ondataavailable: async (_blob) => {
+                    const buffer = Buffer.from(await _blob.arrayBuffer())
+                    socket.emit("send-audio", {
+                        audio: buffer,
+                        callID: callID
+                    })
+                }
+
+            });
+            setRecorder(recorderLoc)
+        })()
+
+    }, [])
+
+    function handleStart() {
+        setRecordingStatus('active')
+        recorder?.startRecording()
+        const recInterval = setInterval(async () => {
+            recorder?.stopRecording()
+            recorder?.startRecording()
+        }, 15000)
+
+        setIntervalVar(recInterval)
+    }
+
+    function handleStop() {
+        recorder?.stopRecording()
+        clearInterval(interval)
+        setRecordingStatus('inactive')
+    }
 
     function endCall() {
         socket.emit('leave-voice-call', { id: callID })
         router.push('/user/dashboard')
     }
 
+
     useEffect(() => {
-        socket.once('new-video-user', ({ userID, lang }: { userID: string, lang : any }) => {
-            if(Object.keys(lang).length > 1)
+        socket.once('new-user-joined', ({ userID, lang }: { userID: string, lang: any }) => {
+            if (Object.keys(lang).length > 1)
                 setIsReceiver(true)
             else
                 setIsReceiver(false)
@@ -42,30 +84,27 @@ function VideoAudioRecorder({ callID , connectionFunc, receiverID} : Props) {
 
     return (
         <div className="flex gap-5 items-center">
-            <button className={`flex justify-center items-center w-[60px] h-[60px] ${recording === false ? 'bg-[#222222] hover:bg-black' : 'bg-slate-600 hover:bg-slate-900'} rounded-full`}
+            <button className={`flex justify-center items-center w-[60px] h-[60px] rounded-full transition-all ${recordingStatus === 'active' ? "bg-slate-950" : "bg-red-600"}`}
                 onClick={() => {
-                    if (recording === false)
-                        startRecording()
+                    if (recordingStatus === 'inactive')
+                        handleStart()
                     else
-                    {
-                        stopRecording()
-                        socket.emit("send-audio", { "text" : transcript.text, callID })
-                        setTranslations((translations : any) => [...translations, {text : transcript.text, self: true }])
-                    }
+                        handleStop()
                 }}>
-                <img src="/icons/mic.svg" height={30} width={30} className="invert" />
+                {
+                    recordingStatus === 'active' ? <Microphone size={"30px"} color="white" /> : <MicrophoneOff size={"30px"} color="white" />
+                }
             </button>
             <button className={`bg-[#222222] hover:bg-black text-white px-6 max-h-10 h-[80px] rounded-2xl`}
                 onClick={() => {
-                    if(isConnectionMade === false && isReceiver === false)
-                        {
-                            if(receiverID === null || !receiverID) {
-                                toast.error("No user found to call")
-                                return
-                            }
-                            connectionFunc()
-                            setConnection(true)
+                    if (isConnectionMade === false && isReceiver === false) {
+                        if (receiverID === null || !receiverID) {
+                            toast.error("No user found to call")
+                            return
                         }
+                        connectionFunc()
+                        setConnection(true)
+                    }
                     else
                         endCall()
                 }}>
@@ -73,8 +112,13 @@ function VideoAudioRecorder({ callID , connectionFunc, receiverID} : Props) {
                     isReceiver === false && isConnectionMade === false ? "Connect" : "End call"
                 }
             </button>
-            <button className={`flex justify-center items-center w-[60px] h-[60px] bg-black rounded-full`}>
-                <Camera size={"30px"} color="white" />
+            <button className={`flex justify-center items-center w-[60px] h-[60px] bg-black rounded-full transition-all ${camera === true ? "bg-slate-950" : "bg-red-600"}`}
+            onClick={() => {
+                setCamera(!camera)
+            }}>
+                {
+                    camera === true ? <Camera size={"30px"} color="white" /> : <CameraOff size={"30px"} color="white" />
+                }
             </button>
         </div>
 
