@@ -59,21 +59,15 @@ io.of('/').adapter.on('leave-room', (room: string, id: string) => {
 
 
 io.of('/').adapter.on('join-room', (room: string, id: string) => {
-  if(room.includes('voice'))
-    io.to(room).emit('new-user-joined', { callID : room.replace('voice/', ''), id })
-  if(room.includes('video'))
-  {
-    var users = io.sockets.adapter.rooms.get(room)
-    let lang : any = {}
-    users?.forEach((el) => {
-      // @ts-expect-error
-      const userLang = IdLanguageMap[el]
-      lang[el] = userLang
-    })
-    console.log(lang)
-    io.to(room).emit('new-video-user', { userID: id, lang })
-
-  }
+  var users = io.sockets.adapter.rooms.get(room)
+  let lang: any = {}
+  users?.forEach((el) => {
+    // @ts-expect-error
+    const userLang = IdLanguageMap[el]
+    lang[el] = userLang
+  })
+  io.to(room).emit('new-user-joined', { callID: room.replace('voice/', ''), id, lang })
+  io.to(room).emit('new-video-user', { userID: id, lang })
 })
 
 

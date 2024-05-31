@@ -38,7 +38,7 @@ function CallPage() {
             <TranscriptionsContext.Provider value={{ translations, setTranslations }}>
                 <NavBar2 />
                 <section className="flex justify-center items-center flex-col w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
-                    <div className="flex flex-col justify-between w-full h-full p-8 max-w-screen-xl gap-20 md:gap-2 max-h-[700px]">
+                    <div className="flex flex-col justify-between w-full h-full p-4 max-w-screen-xl gap-20 md:gap-2 max-h-[700px]">
 
                         <div className="w-full md:mx-6">
                             <div className="bg-white border border-[rgba(0, 0, 0, 0.1)] rounded-2xl px-6 py-6 flex items-center flex-col gap-8">
