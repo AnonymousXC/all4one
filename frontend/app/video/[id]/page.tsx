@@ -7,10 +7,11 @@ import socket from "@/utils/Socket";
 import { useParams } from "next/navigation";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
-import VideoAudioRecorder from "../VidAudioRecorder";
 import VideoReceiver from "../VideoReceiver";
 import { makeVideoCall, receiveCall } from "../CallFunctions";
+import dynamic from "next/dynamic";
 
+const VideoAudioRecorder = dynamic(() => import("../VidAudioRecorder"), {ssr : false})
 
 function VideoCall() {
 

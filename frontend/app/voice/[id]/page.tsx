@@ -2,13 +2,14 @@
 import socket from "@/utils/Socket";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import AudioRecorder from "../audioRecorder";
 import AudioReceiver from "../audioReceiver";
 import StatsForNerds from "@/components/Stats";
 import LanguageModel from "@/components/global/Language/LanguageModal";
 import NavBar2 from "@/components/global/navbar/Navigationbar2";
 import TranscriptionsContext from "@/contexts/TrancriptionsContext";
+import dynamic from "next/dynamic";
 
+const AudioRecorder = dynamic(() => import('@/app/voice/audioRecorder'), { ssr : false });
 
 function CallPage() {
 
