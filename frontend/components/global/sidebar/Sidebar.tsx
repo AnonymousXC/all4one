@@ -19,7 +19,7 @@ function Sidebar() {
 
     return (
         <section className={`
-                left-0 flex overflow-hidden transition-all touch-none z-50
+                left-0 flex overflow-hidden transition-all touch-none z-50 ${pathname.includes('user') ? '' : 'md:hidden'}
                 fixed h-[calc(100vh_-_70px)] top-[70px] ${width ? 'w-full' : 'w-0'} w-0
                 md:relative md:max-w-[220px] md:h-screen md:top-0 md:w-full
                 bg-[#FAFBFF] justify-center items-center

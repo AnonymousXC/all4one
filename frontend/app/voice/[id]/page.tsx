@@ -8,6 +8,7 @@ import LanguageModel from "@/components/global/Language/LanguageModal";
 import NavBar2 from "@/components/global/navbar/Navigationbar2";
 import TranscriptionsContext from "@/contexts/TrancriptionsContext";
 import dynamic from "next/dynamic";
+import Sidebar from "@/components/global/sidebar/Sidebar";
 
 const AudioRecorder = dynamic(() => import('@/app/voice/audioRecorder'), { ssr : false });
 
@@ -38,6 +39,7 @@ function CallPage() {
         <>
             <TranscriptionsContext.Provider value={{ translations, setTranslations }}>
                 <NavBar2 />
+                <Sidebar />
                 <section className="flex justify-center items-center flex-col w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
                     <div className="flex flex-col justify-between w-full h-full p-4 max-w-screen-xl gap-20 md:gap-2 max-h-[700px]">
 

@@ -29,12 +29,16 @@ const sentAudio = async function(this: Socket, data: FrontendData) {
       if(endUserLanguage === undefined || !endUserLanguage)
         endUserLanguage = "en"
 
-      console.log("Received audio", endUserLanguage)
+      // @ts-expect-error
+      let selfLanguage = IdLanguageMap[socket.id]
+
+      console.log(`Received audio. Self language : ${selfLanguage}. Language To : ${endUserLanguage}`)
 
       const transcription = await openai.audio.transcriptions.create({
         file: await toFile(data.audio, socket.id + getTimeNow() + ".wav"),
         model: 'whisper-1',
-        response_format: 'json'
+        response_format: 'json',
+        language: selfLanguage,
       })
 
       io.to(data.callID).emit("receive-transcription", { "text": transcription.text, "id" : socket.id })

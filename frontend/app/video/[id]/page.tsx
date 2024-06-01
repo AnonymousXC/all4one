@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import VideoReceiver from "../VideoReceiver";
 import { makeVideoCall, receiveCall } from "../CallFunctions";
 import dynamic from "next/dynamic";
+import Sidebar from "@/components/global/sidebar/Sidebar";
 
 const VideoAudioRecorder = dynamic(() => import("../VidAudioRecorder"), {ssr : false})
 
@@ -60,6 +61,7 @@ function VideoCall() {
         <PeerContext.Provider value={peer}>
             <TranscriptionsContext.Provider value={{ translations, setTranslations }}>
                 <NavBar2 />
+                <Sidebar />
                 <section className="flex justify-center items-center flex-col w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
                     <div className="flex flex-col justify-between w-full h-full p-8 max-w-screen-xl gap-20 md:gap-2">
 
