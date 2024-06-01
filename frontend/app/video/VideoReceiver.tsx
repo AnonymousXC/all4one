@@ -1,9 +1,7 @@
 'use client'
-import TranscriptionsContext from "@/contexts/TrancriptionsContext";
-import WhisperContext from "@/contexts/WhisperContext";
 import socket from "@/utils/Socket";
 import languages from "@/utils/languageMap";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
     selfVideoRef: any,
@@ -36,6 +34,8 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
     const [receiverServerLang, setReceiverServerLang] = useState<string>("Waiting for user...")
     const [lastTranslation, setLastTranslation] = useState("")
     const [lastTranscription, setLastTranscription] = useState("")
+    const [selfSpeaking, setSelfSpeaking] = useState(false)
+    const [receiverSpeaking, setReceiverSpeaking] = useState(false)
 
 
     const recMsg = (data: SocketData) => {
@@ -49,11 +49,10 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
     }
 
     const receiveTransciption = (data: TransciptionData) => {
-        if (data.id === socket.id)
-            {
-                setLastTranscription(data.text)
-                setCaptions(captions => [...captions, { text: data.text, id: data.id }])
-            }
+        if (data.id === socket.id) {
+            setLastTranscription(data.text)
+            setCaptions(captions => [...captions, { text: data.text, id: data.id }])
+        }
     }
 
     const newVideoUserJoin = ({ userID, lang }: { userID: string, lang: any }) => {
@@ -67,16 +66,34 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
         })
     }
 
+    const onSpeakStart = (data: { id: string }) => {
+        if (data.id === socket.id)
+            setSelfSpeaking(true)
+        else
+            setReceiverSpeaking(true)
+    }
+
+    const onSpeakEnd = (data: { id: string }) => {
+        if (data.id === socket.id)
+            setSelfSpeaking(false)
+        else
+            setReceiverSpeaking(false)
+    }
+
     useEffect(() => {
 
         socket.on("receive-translation", recMsg)
         socket.on("receive-transcription", receiveTransciption)
         socket.on('new-user-joined', newVideoUserJoin)
+        socket.on('speech-start', onSpeakStart)
+        socket.on('speech-end', onSpeakEnd)
 
         return () => {
             socket.off("receive-translation", recMsg)
             socket.off('new-video-user', newVideoUserJoin)
             socket.off("receive-transcription", receiveTransciption)
+            socket.off('speech-start', onSpeakStart)
+            socket.off('speech-end', onSpeakEnd)
             blobURL.forEach((el: string, idx: number) => {
                 URL.revokeObjectURL(el)
             })
@@ -99,14 +116,14 @@ function VideoReceiver({ selfVideoRef, receiverVideoRef }: Props) {
             </audio>
             <div className="flex flex-col max-w-[450px] w-full">
                 <video src="" ref={selfVideoRef} className=" bg-main-purple w-full h-full rounded-2xl  max-h-[340px]"></video>
-                <p className="mt-4 bg-main-purple py-2 px-6 rounded-2xl max-w-[200px]"> {selfServerLang} </p>
+                <p className={`mt-4 py-2 px-6 rounded-2xl max-w-[200px] ${selfSpeaking === true ? 'bg-[#362360] text-white' : 'bg-main-purple'}`}> {selfServerLang} {selfSpeaking === true ? "- Speaking..." : ""} </p>
                 <p className="mt-4">
                     You : {lastTranscription}
                 </p>
             </div>
             <div className="flex flex-col max-w-[450px] w-full">
                 <video src="" ref={receiverVideoRef} className="bg-main-purple w-full h-full rounded-2xl max-h-[340px]"></video>
-                <p className="mt-4 bg-main-purple py-2 px-6 rounded-2xl max-w-[200px]"> {receiverServerLang} </p>
+                <p className={`mt-4 py-2 px-6 rounded-2xl max-w-[200px] ${receiverSpeaking === true ? 'bg-[#362360] text-white' : 'bg-main-purple'}`}> {receiverServerLang} {receiverSpeaking === true ? "- Speaking..." : ""} </p>
                 <p className="mt-4">
                     Other : {lastTranslation}
                 </p>

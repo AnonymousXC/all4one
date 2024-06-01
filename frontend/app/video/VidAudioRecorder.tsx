@@ -1,9 +1,7 @@
 'use client'
-import TranscriptionsContext from "@/contexts/TrancriptionsContext";
-import WhisperContext from "@/contexts/WhisperContext";
 import socket from "@/utils/Socket";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Camera, Microphone } from "@/utils/iconsExports"
 import { toast } from "react-toastify";
 import { MediaStreamRecorder, RecordRTCPromisesHandler } from "recordrtc";
@@ -86,10 +84,14 @@ function VideoAudioRecorder({ callID, connectionFunc, receiverID }: Props) {
         <div className="flex gap-5 items-center">
             <button className={`flex justify-center items-center w-[60px] h-[60px] rounded-full transition-all ${recordingStatus === 'active' ? "bg-slate-950" : "bg-red-600"}`}
                 onClick={() => {
-                    if (recordingStatus === 'inactive')
+                    if (recordingStatus === "inactive") {
                         handleStart()
-                    else
+                        socket.emit("speaking-start", { callID: "video/" + callID })
+                    }
+                    else {
                         handleStop()
+                        socket.emit("speaking-end", { callID: "video/" + callID })
+                    }
                 }}>
                 {
                     recordingStatus === 'active' ? <Microphone size={"30px"} color="white" /> : <MicrophoneOff size={"30px"} color="white" />

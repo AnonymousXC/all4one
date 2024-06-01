@@ -65,15 +65,18 @@ function AudioRecorder({ callID }: { callID: string | string[] }) {
         <div className="flex gap-5 items-center">
             <button className={`flex justify-center items-center w-[60px] h-[60px] rounded-full transition-all ${recordingStatus === 'active' ? "bg-slate-950" : "bg-red-600"}`}
                 onClick={() => {
-                    if (recordingStatus === "inactive")
+                    if (recordingStatus === "inactive") {
                         handleStart()
+                        socket.emit("speaking-start", { callID: "voice/" + callID })
+                    }
                     else {
                         handleStop()
+                        socket.emit("speaking-end", { callID: "voice/" + callID })
                     }
                 }}>
-                    {
-                        recordingStatus === 'active' ? <Microphone size={"30px"} color="white" /> : <MicrophoneOff size={"30px"} color="white" />
-                    }
+                {
+                    recordingStatus === 'active' ? <Microphone size={"30px"} color="white" /> : <MicrophoneOff size={"30px"} color="white" />
+                }
             </button>
             <button className={`bg-[#222222] hover:bg-black text-white px-6 max-h-10 h-[80px] rounded-2xl`}
                 onClick={endCall}>

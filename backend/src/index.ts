@@ -14,6 +14,8 @@ import LanguageSelect, { IdLanguageMap } from "./events/LanguageSetter";
 import onDisconnect from "./events/Disconnect";
 import LeaveCall from "./events/LeaveCall";
 import joinVideoCall from "./events/video/joinVideoCall";
+import SpeechStarted from "./events/speech/SpeechStarted";
+import SpeechEnd from "./events/speech/SpeechEnd";
 
 // Variables
 const app: Express = express();
@@ -50,6 +52,9 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('join-video', joinVideoCall)
 
+  socket.on('speaking-start', SpeechStarted)
+
+  socket.on('speaking-end', SpeechEnd)
 });
 
 

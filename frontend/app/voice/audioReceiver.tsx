@@ -29,6 +29,8 @@ function AudioReceiver() {
     const audio = useRef<HTMLAudioElement>(null)
     const [selfServerLanguage, setSelfServerLang] = useState("Waiting for server...")
     const [receiverServerLang, setReceiverServerLang] = useState("Waiting for server...")
+    const [selfSpeaking, setSelfSpeaking] = useState(false)
+    const [receiverSpeaking, setReceiverSpeaking] = useState(false)
 
     const recMsg = (data: SocketData) => {
         setCaptions(captions => [...captions, { text: data.text, id: data.id }])
@@ -55,17 +57,36 @@ function AudioReceiver() {
         })
     }
 
+    const onSpeakStart = (data: { id: string }) => {
+        if (data.id === socket.id)
+            setSelfSpeaking(true)
+        else
+            setReceiverSpeaking(true)
+    }
+
+    const onSpeakEnd = (data: { id: string }) => {
+        if (data.id === socket.id)
+            setSelfSpeaking(false)
+        else
+            setReceiverSpeaking(false)
+    }
+
     useEffect(() => {
 
         socket.on("receive-translation", recMsg)
         socket.on("receive-transcription", receiveTransciption)
         socket.on('new-user-joined', newVideoUserJoin)
+        socket.on('speech-start', onSpeakStart)
+        socket.on('speech-end', onSpeakEnd)
 
 
         return () => {
             socket.off("receive-translation", recMsg)
             socket.off("receive-transcription", receiveTransciption)
             socket.off('new-voice-user', newVideoUserJoin)
+            socket.off('speaking', onSpeakStart)
+            socket.off('speaking-end', onSpeakEnd)
+
 
             blobURL.forEach((el: string, idx: number) => {
                 URL.revokeObjectURL(el)
@@ -92,8 +113,8 @@ function AudioReceiver() {
             <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={blobURL[current]} onEnded={handleAudioEnd}>
             </audio>
             <div className="flex justify-between gap-5">
-                <p className="dropdown flex-1"> {selfServerLanguage} </p>
-                <p className="dropdown flex-1"> {receiverServerLang} </p>
+                <p className={`dropdown flex-1 transition-all ${selfSpeaking === true ? 'bg-[#362360] text-white' : ''}`}> {selfServerLanguage} {selfSpeaking === true ? "- Speaking..." : ""} </p>
+                <p className={`dropdown flex-1 transition-all ${receiverSpeaking === true ? 'bg-[#362360] text-white' : ''}`}> {receiverServerLang} {receiverSpeaking === true ? "- Speaking..." : ""} </p>
             </div>
             <div className="w-full min-h-[350px] bg-main-purple rounded-2xl relative py-3">
                 <div className="flex flex-col gap-4 flex-1 overflow-y-auto max-h-[calc(350px-1rem)] scrollbar">

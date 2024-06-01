@@ -6,7 +6,6 @@ const LanguageSelect = function(this : Socket, data : { language : string, email
     const socket = this;
     // @ts-expect-error
     IdLanguageMap[socket.id] = data.language
-    console.log(IdLanguageMap)
 }
 
 export default LanguageSelect;
