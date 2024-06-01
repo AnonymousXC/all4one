@@ -69,6 +69,11 @@ function VideoAudioRecorder({ callID, connectionFunc, receiverID }: Props) {
         router.push('/user/dashboard')
     }
 
+    const onRoomLeave = () => {
+        setConnection(false)
+        setIsReceiver(false)
+    }
+
 
     useEffect(() => {
         window.setCamera = setCamera
@@ -78,6 +83,12 @@ function VideoAudioRecorder({ callID, connectionFunc, receiverID }: Props) {
             else
                 setIsReceiver(false)
         })
+        socket.on('room-left', onRoomLeave)
+
+        return () => {
+            socket.off('room-left', onRoomLeave)
+        }
+
     }, [])
 
 
