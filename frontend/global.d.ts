@@ -4,6 +4,8 @@ export {}
 declare global {
     interface Window {
         sidebar: boolean,
-        setSidebar: Dispatch<SetStateAction<boolean>>
+        setSidebar: Dispatch<SetStateAction<boolean>>,
+        selfStream: MediaStream,
+        setCamera: Dispatch<SetStateAction<boolean>>
     }
 }

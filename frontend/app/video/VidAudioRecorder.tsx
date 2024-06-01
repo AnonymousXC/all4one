@@ -71,6 +71,7 @@ function VideoAudioRecorder({ callID, connectionFunc, receiverID }: Props) {
 
 
     useEffect(() => {
+        window.setCamera = setCamera
         socket.once('new-user-joined', ({ userID, lang }: { userID: string, lang: any }) => {
             if (Object.keys(lang).length > 1)
                 setIsReceiver(true)
@@ -116,7 +117,11 @@ function VideoAudioRecorder({ callID, connectionFunc, receiverID }: Props) {
             </button>
             <button className={`flex justify-center items-center w-[60px] h-[60px] bg-black rounded-full transition-all ${camera === true ? "bg-slate-950" : "bg-red-600"}`}
             onClick={() => {
-                setCamera(!camera)
+                if(window.selfStream)
+                {
+                    window.selfStream.getVideoTracks()[0].enabled = !window.selfStream.getVideoTracks()[0].enabled
+                    setCamera(window.selfStream.getVideoTracks()[0].enabled)
+                }
             }}>
                 {
                     camera === true ? <Camera size={"30px"} color="white" /> : <CameraOff size={"30px"} color="white" />
