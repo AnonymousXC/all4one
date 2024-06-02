@@ -15,7 +15,8 @@ function SubmitButton() {
                 toast.info("Processing your request...", { position: "top-right", autoClose: 1000 })
                 const status = JSON.parse(await signup(data))
                 if (status.error) {
-                    toast.error(`Error creating an account : ${status.error.name}`)
+                    console.log(status.error)
+                    toast.error(`Error creating an account : ${status.error?.code}`)
                 }
                 else {
                     toast.success("Account created successfully.")
@@ -24,7 +25,7 @@ function SubmitButton() {
 
             }}
             type="submit"
-            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
         >
             Sign Up
         </button>
