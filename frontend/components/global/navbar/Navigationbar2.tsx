@@ -1,6 +1,6 @@
 import Dots from "./Dots";
 import HamburgerMenuButton from "./Hamburger";
-import UserDropDown from "./UserDropDown";
+// import UserDropDown from "./UserDropDown";
 
 function NavBar2() {
     return (
@@ -10,9 +10,9 @@ function NavBar2() {
                 <Dots />
             </div>
             <HamburgerMenuButton />
-            <UserDropDown />
+            {/* <UserDropDown /> */}
         </nav>
     )
 }
 
-export default NavBar2;
+// export default NavBar2;

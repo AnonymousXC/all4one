@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import AudioReceiver from "../audioReceiver";
 import StatsForNerds from "@/components/Stats";
 import LanguageModel from "@/components/global/Language/LanguageModal";
-import NavBar2 from "@/components/global/navbar/Navigationbar2";
+import NavBar from "@/components/global/navbar/NavigationBar";
 import TranscriptionsContext from "@/contexts/TrancriptionsContext";
 import dynamic from "next/dynamic";
 import Sidebar from "@/components/global/sidebar/Sidebar";
@@ -38,7 +38,7 @@ function CallPage() {
     return (
         <>
             <TranscriptionsContext.Provider value={{ translations, setTranslations }}>
-                <NavBar2 />
+                <NavBar />
                 <Sidebar />
                 <section className="flex justify-center items-center flex-col w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
                     <div className="flex flex-col justify-between w-full h-full p-4 max-w-screen-xl gap-20 md:gap-2 max-h-[700px]">
