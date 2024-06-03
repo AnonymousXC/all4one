@@ -1,4 +1,3 @@
-import recoverPassword from "@/database/passwordRecovery";
 import SubmitButton from "./Button";
 
 

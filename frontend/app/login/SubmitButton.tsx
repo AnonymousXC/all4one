@@ -15,7 +15,7 @@ function SubmitButton() {
                 toast.info("Processing your request...", { position: "top-right", autoClose: 1000 })
                 const status = JSON.parse(await login(data))
                 if (status.error) {
-                    toast.error(`Error logging into account : ${status.error?.code}`)
+                    toast.error(`Error logging into account. ${status.error?.code || ''}`)
                 }
                 else {
                     toast.success("Logged in successfully.")

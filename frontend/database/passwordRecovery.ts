@@ -6,14 +6,12 @@ async function recoverPassword(data : FormData) {
     const supabase = createClient()
     const email = data.get('email') as string
 
-    const status = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: '/reset'
-    })
-
-    console.log(status)
+    const status = await supabase.auth.resetPasswordForEmail(email)
 
     if(status.data)
-        redirect('/reset')
+        redirect('/recover/success')
+    else
+        redirect('/recover/error')
 }
 
 export default recoverPassword;

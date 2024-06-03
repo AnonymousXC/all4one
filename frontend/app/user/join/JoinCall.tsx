@@ -24,10 +24,10 @@ function CallJoining() {
 
     return (
         <>
-            <div>
+            {/* <div>
                 <label htmlFor="name" className="block mb-2 text-base font-medium mt-4">Name</label>
                 <input type="text" className="dropdown" placeholder="enter your name" />
-            </div>
+            </div> */}
             <div className="flex flex-col-reverse md:flex-row gap-6 md:mt-6 mt-4">
                 <div>
                     <button className="border px-6 rounded-2xl border-black flex gap-3 items-center min-h-12 w-full" onClick={() => setNewCallMenu(!showNewCallMenu)}>
