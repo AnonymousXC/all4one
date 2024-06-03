@@ -1,26 +1,20 @@
-'use client'
+import getUser from "@/database/getUser";
+import { redirect } from "next/navigation";
 
-import { useRouter } from "next/navigation";
 
 
-function Home() {
+async function Home() {
 
-    const router = useRouter()
+    const user = await getUser()
+
+    if(user.data.user === null)
+        redirect('/login')
+    else
+        redirect('/user/dashboard')
 
     return (
-        <div>
-            <button onClick={() => {
-                router.push('/join')
-            }}>
-                Click to go to join voice call
-            </button>
-            <br />
-            <br />
-            <button onClick={() => {
-                router.push('/user/dashboard')
-            }}>
-                Click to go to dashboard
-            </button>
+        <div className="flex justify-center items-center h-screen">
+            Loading...
         </div>
     )
 }
