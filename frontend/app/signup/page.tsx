@@ -2,11 +2,12 @@ import Link from "next/link";
 import SubmitButton from "./SubmitButton";
 import getUser from "@/database/getUser";
 import { redirect } from "next/navigation";
+import { UserResponse } from "@supabase/supabase-js";
 
 
 async function SignUp() {
 
-    const user = await getUser()
+    const user = JSON.parse(await getUser()) as UserResponse;
     
     if(user.data.user !== null)
         redirect('/user/dashboard')

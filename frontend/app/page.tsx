@@ -1,11 +1,12 @@
 import getUser from "@/database/getUser";
+import { UserResponse } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 
 
 
 async function Home() {
 
-    const user = await getUser()
+    const user = JSON.parse(await getUser()) as UserResponse;
 
     if(user.data.user === null)
         redirect('/login')

@@ -1,6 +1,5 @@
 'use client'
 import LanguageModel from "@/components/global/Language/LanguageModal";
-import NavBar from "@/components/global/navbar/NavigationBar";
 import PeerContext from "@/contexts/PeerContext";
 import TranscriptionsContext from "@/contexts/TrancriptionsContext";
 import socket from "@/utils/Socket";
@@ -11,6 +10,7 @@ import VideoReceiver from "../VideoReceiver";
 import { makeVideoCall, receiveCall } from "../CallFunctions";
 import dynamic from "next/dynamic";
 import Sidebar from "@/components/global/sidebar/Sidebar";
+import NavBarClientSide from "@/components/global/navbar/NavigationBarClient";
 
 const VideoAudioRecorder = dynamic(() => import("../VidAudioRecorder"), {ssr : false})
 
@@ -60,7 +60,7 @@ function VideoCall() {
     return (
         <PeerContext.Provider value={peer}>
             <TranscriptionsContext.Provider value={{ translations, setTranslations }}>
-                <NavBar />
+                <NavBarClientSide />
                 <Sidebar />
                 <section className="flex justify-center items-center flex-col w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
                     <div className="flex flex-col justify-between w-full h-full p-8 max-w-screen-xl gap-20 md:gap-2">

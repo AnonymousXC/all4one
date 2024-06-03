@@ -5,6 +5,7 @@ import "./global.css"
 import NavBar from "@/components/global/navbar/NavigationBar";
 import getUser from "@/database/getUser";
 import { redirect } from "next/navigation";
+import { UserResponse } from "@supabase/supabase-js";
 
 export default async function RootLayout({
   children,
@@ -12,7 +13,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const user = await getUser()
+  const user = JSON.parse(await getUser()) as UserResponse;
 
   if(user.data.user === null)
     redirect('/login')

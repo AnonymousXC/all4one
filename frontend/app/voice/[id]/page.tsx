@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import AudioReceiver from "../audioReceiver";
 import StatsForNerds from "@/components/Stats";
 import LanguageModel from "@/components/global/Language/LanguageModal";
-import NavBar from "@/components/global/navbar/NavigationBar";
 import TranscriptionsContext from "@/contexts/TrancriptionsContext";
 import dynamic from "next/dynamic";
 import Sidebar from "@/components/global/sidebar/Sidebar";
+import NavBarClientSide from "@/components/global/navbar/NavigationBarClient";
 
 const AudioRecorder = dynamic(() => import('@/app/voice/audioRecorder'), { ssr : false });
 
@@ -38,11 +38,10 @@ function CallPage() {
     return (
         <>
             <TranscriptionsContext.Provider value={{ translations, setTranslations }}>
-                <NavBar />
+                <NavBarClientSide />
                 <Sidebar />
                 <section className="flex justify-center items-center flex-col w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
                     <div className="flex flex-col justify-between w-full h-full p-4 max-w-screen-xl gap-20 md:gap-2 max-h-[700px]">
-
                         <div className="w-full md:mx-6">
                             <div className="bg-white border border-[rgba(0, 0, 0, 0.1)] rounded-2xl px-6 py-6 flex items-center flex-col gap-8">
                                 <div className="flex w-full justify-between">
@@ -55,7 +54,6 @@ function CallPage() {
                         </div>
                         <StatsForNerds />
                         <LanguageModel />
-
                     </div>
                 </section>
             </TranscriptionsContext.Provider>
