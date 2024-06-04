@@ -9,6 +9,7 @@ import TranscriptionsContext from "@/contexts/TrancriptionsContext";
 import dynamic from "next/dynamic";
 import Sidebar from "@/components/global/sidebar/Sidebar";
 import NavBarClientSide from "@/components/global/navbar/NavigationBarClient";
+import "react-toastify/ReactToastify.css"
 
 const AudioRecorder = dynamic(() => import('@/app/voice/audioRecorder'), { ssr : false });
 
@@ -46,7 +47,7 @@ function CallPage() {
                             <div className="bg-white border border-[rgba(0, 0, 0, 0.1)] rounded-2xl px-6 py-6 flex items-center flex-col gap-8">
                                 <div className="flex w-full justify-between">
                                     <h3 className="text-xl font-bold">Good evening!</h3>
-                                    <p> {date.toLocaleTimeString()} </p>
+                                    <p suppressHydrationWarning> {date.toLocaleTimeString()} </p>
                                 </div>
                                 <AudioReceiver />
                                 <AudioRecorder callID={id} />

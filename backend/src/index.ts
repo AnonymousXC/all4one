@@ -71,9 +71,30 @@ io.of('/').adapter.on('join-room', (room: string, id: string) => {
     const userLang = IdLanguageMap[el]
     lang[el] = userLang
   })
-  if(room.includes('voice') || room.includes('video'))
+  if (room.includes('voice') || room.includes('video'))
     io.to(room).emit('new-user-joined', { callID: room.replace('voice/', ''), id, lang })
 })
+
+
+app.post('/payment', express.json({ type: 'application/json' }), (request, response) => {
+
+  const event = request.body;
+
+  if (event.type === 'payment_intent.succeeded') {
+    console.log(`Handled event type ${event.type}`);
+  }
+  else if (event.type === 'payment_method.attached') {
+    console.log(`Handled event type ${event.type}`);
+
+  }
+  else
+    console.log(`Unhandled event type ${event.type}`);
+  {
+
+  }
+
+  response.json({ received: true });
+});
 
 
 server.listen(port, () => {
