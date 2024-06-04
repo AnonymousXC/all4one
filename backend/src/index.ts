@@ -2,8 +2,8 @@ const express = require('express');
 const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 const cors = require('cors')
-const path = require('path')
 require('dotenv').config()
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 // types imports
 import { Express, Request, Response } from "express";
@@ -75,25 +75,23 @@ io.of('/').adapter.on('join-room', (room: string, id: string) => {
     io.to(room).emit('new-user-joined', { callID: room.replace('voice/', ''), id, lang })
 })
 
+const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET_PRODUCTION
 
-app.post('/payment', express.json({ type: 'application/json' }), (request, response) => {
+app.post('/payment', express.raw({ type: 'application/json' }), (request, response) => {
 
-  const event = request.body;
+  const sig = request.headers['stripe-signature'];
+  let event;
 
-  if (event.type === 'payment_intent.succeeded') {
-    console.log(`Handled event type ${event.type}`);
-  }
-  else if (event.type === 'payment_method.attached') {
-    console.log(`Handled event type ${event.type}`);
-
-  }
-  else
-    console.log(`Unhandled event type ${event.type}`);
-  {
-
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+  } catch (err: any) {
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
   }
 
-  response.json({ received: true });
+  console.log("Recieved stripe payment. Event type : " + event.type)
+
+  response.send();
 });
 
 
