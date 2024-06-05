@@ -84,23 +84,17 @@ const endpointSecret = process.env.NODE_ENV === 'development' ? process.env.STRI
 app.post('/payment', express.raw({ type: 'application/json' }), async (request, response) => {
 
   try {
-
-    // if (!request.metadata.id || !request.metadata.email) {
-    //   console.log(request)
-    //   response.status(400).send(`No database id or email was found in request.`)
-    //   return;
-    // }
-
-    console.log(request)
-
-    const sig = request.headers['stripe-signature'];
-    let event;
-
-    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    
+    const sig = request.headers['stripe-signature'];    
+    let event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    
+    if (!event.data.metadata.id || !event.data.metadata.email) {
+      response.status(400).send(`No database id or email was found in request.`)
+      return;
+    }
 
     if (event.type === 'checkout.session.completed') {
-      // @ts-expect-error
-      const status = await updateCredits(request.metadata.id, request.metadata.email, request.data.object.amount_total)
+      const status = await updateCredits(event.data.metadata.id, event.data.metadata.email, event.data.object.amount)
 
       console.log(status)
 
