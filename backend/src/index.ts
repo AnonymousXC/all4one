@@ -88,13 +88,13 @@ app.post('/payment', express.raw({ type: 'application/json' }), async (request, 
     const sig = request.headers['stripe-signature'];    
     let event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
     
-    if (!event.data.metadata.id || !event.data.metadata.email) {
+    if (!event.data.object.metadata.id || !event.data.object.metadata.email) {
       response.status(400).send(`No database id or email was found in request.`)
       return;
     }
 
     if (event.type === 'checkout.session.completed') {
-      const status = await updateCredits(event.data.metadata.id, event.data.metadata.email, event.data.object.amount)
+      const status = await updateCredits(event.data.object.metadata.id, event.data.object.metadata.email, event.data.object.amount)
 
       console.log(status)
 
