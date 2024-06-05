@@ -85,11 +85,13 @@ app.post('/payment', express.raw({ type: 'application/json' }), async (request, 
 
   try {
 
-    // @ts-expect-error
-    if (!request.metadata.id || !request.metadata.email) {
-      response.status(400).send(`No database id or email was found in request.`)
-      return;
-    }
+    // if (!request.metadata.id || !request.metadata.email) {
+    //   console.log(request)
+    //   response.status(400).send(`No database id or email was found in request.`)
+    //   return;
+    // }
+
+    console.log(request)
 
     const sig = request.headers['stripe-signature'];
     let event;
@@ -99,6 +101,8 @@ app.post('/payment', express.raw({ type: 'application/json' }), async (request, 
     if (event.type === 'checkout.session.completed') {
       // @ts-expect-error
       const status = await updateCredits(request.metadata.id, request.metadata.email, request.data.object.amount_total)
+
+      console.log(status)
 
       if (status.error !== null) {
         response.status(400).send(`Their was an error in updating the credits. ${status.error.details}`)
@@ -110,6 +114,7 @@ app.post('/payment', express.raw({ type: 'application/json' }), async (request, 
   }
   catch (err: any) {
     response.status(400).send(`Webhook Error: ${err.message}`);
+    console.log(err)
     return;
   }
 
