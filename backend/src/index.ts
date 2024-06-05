@@ -96,19 +96,16 @@ app.post('/payment', express.raw({ type: 'application/json' }), async (request, 
     if (event.type === 'checkout.session.completed') {
       const status = await updateCredits(event.data.object.metadata.id, event.data.object.metadata.email, event.data.object.amount)
 
-      console.log(status)
-
       if (status.error !== null) {
         response.status(400).send(`Their was an error in updating the credits. ${status.error.details}`)
         return;
       }
-      response.send(`Credited in ${event.metadata.email}`);
+      response.send(`Credited in ${event.data.object.metadata.email} with uid : ${event.data.object.metadata.id}`);
     }
 
   }
   catch (err: any) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
-    console.log(err)
+    response.status(400).send(`Webhook Error: ${JSON.stringify(err)}`);
     return;
   }
 
