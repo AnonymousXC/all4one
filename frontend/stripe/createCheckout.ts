@@ -10,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 async function createCheckout(data: FormData) {
 
     const user = JSON.parse(await getUser()) as UserResponse
-    const amount = parseFloat(data.get('amount') as string) * 100;
+    const amount = parseFloat(data.get('amount') as string);
 
     if(user.data.user === null)
         redirect('/user/credits?message=Cannot find username')
