@@ -13,7 +13,7 @@ function Credit({ searchParams } : { searchParams : any }) {
                     <h1 className="font-bold text-3xl">Credits</h1>
                     <p className="font-bold text-base text-secondary-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
                 </div>
-                <div className="flex h-full gap-6">
+                <div className="flex h-full gap-6 flex-wrap">
                     <Box>
                         <div>
                             <p className="text-center">0</p>

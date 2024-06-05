@@ -84,10 +84,10 @@ const endpointSecret = process.env.NODE_ENV === 'development' ? process.env.STRI
 app.post('/payment', express.raw({ type: 'application/json' }), async (request, response) => {
 
   try {
-    
-    const sig = request.headers['stripe-signature'];    
+
+    const sig = request.headers['stripe-signature'];
     let event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-    
+
     if (!event.data.object.metadata.id || !event.data.object.metadata.email) {
       response.status(400).send(`No database id or email was found in request.`)
       return;
@@ -106,6 +106,7 @@ app.post('/payment', express.raw({ type: 'application/json' }), async (request, 
   }
   catch (err: any) {
     response.status(400).send(`Webhook Error: ${JSON.stringify(err)}`);
+    console.log(err)
     return;
   }
 

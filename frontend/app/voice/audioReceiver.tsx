@@ -112,7 +112,7 @@ function AudioReceiver() {
         <div className="flex flex-col gap-3 w-full px-8">
             <audio className="-z-50 absolute -top-96" ref={audio} controls autoPlay src={blobURL[current]} onEnded={handleAudioEnd}>
             </audio>
-            <div className="flex justify-between gap-5">
+            <div className="flex justify-between gap-5 flex-wrap">
                 <p className={`dropdown flex-1 transition-all ${selfSpeaking === true ? 'bg-[#362360] text-white' : ''}`}> {selfServerLanguage} {selfSpeaking === true ? "- Speaking..." : ""} </p>
                 <p className={`dropdown flex-1 transition-all ${receiverSpeaking === true ? 'bg-[#362360] text-white' : ''}`}> {receiverServerLang} {receiverSpeaking === true ? "- Speaking..." : ""} </p>
             </div>
