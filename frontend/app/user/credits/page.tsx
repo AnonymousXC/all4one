@@ -7,11 +7,14 @@ import socket from "@/utils/Socket";
 import { useEffect, useState } from "react";
 import getUser from "@/database/getUser";
 import { UserResponse } from "@supabase/supabase-js";
+import { useSearchParams } from "next/navigation";
 
 
-function Credit({ searchParams }: { searchParams: any }) {
+function Credit() {
 
     const [credit, setCredit] = useState<number>()
+    const searchParams = useSearchParams()
+    const message = searchParams.get('message') || ''
 
     useEffect(() => {
 
@@ -62,7 +65,7 @@ function Credit({ searchParams }: { searchParams: any }) {
                     </Box>
                 </div>
             </div>
-            <ToastStatus message={searchParams.message || ''} />
+            <ToastStatus message={message} />
         </section>
     )
 }
