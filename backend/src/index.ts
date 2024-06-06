@@ -98,7 +98,7 @@ app.post('/payment', express.raw({ type: 'application/json' }), async (request, 
     }
 
     if (event.type === 'checkout.session.completed') {
-      const status = await updateCredits(event.data.object.metadata.id, event.data.object.metadata.email, event.amount_total)
+      const status = await updateCredits(event.data.object.metadata.id, event.data.object.metadata.email, event.data.object.amount_total)
 
       if (status.error !== null) {
         response.status(400).send(`Their was an error in updating the credits. ${status.error.details}`)
