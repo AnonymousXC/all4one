@@ -17,6 +17,7 @@ import joinVideoCall from "./events/video/joinVideoCall";
 import SpeechStarted from "./events/speech/SpeechStarted";
 import SpeechEnd from "./events/speech/SpeechEnd";
 import updateCredits from "./database/updateCredits";
+import addToTable from "./database/addUserToTable";
 
 // Variables
 const app: Express = express();
@@ -56,6 +57,9 @@ io.on('connection', (socket: Socket) => {
   socket.on('speaking-start', SpeechStarted)
 
   socket.on('speaking-end', SpeechEnd)
+
+  socket.on('add-user-credit-table', addToTable)
+  
 });
 
 

@@ -1,10 +1,40 @@
+'use client'
 import createCheckout from "@/stripe/createCheckout";
 import Box from "./Box";
-import { toast } from "react-toastify";
 import ToastStatus from "./useToast";
+import getCredits from "@/database/getCredits";
+import socket from "@/utils/Socket";
+import { useEffect, useState } from "react";
+import getUser from "@/database/getUser";
+import { UserResponse } from "@supabase/supabase-js";
 
 
-function Credit({ searchParams } : { searchParams : any }) {
+function Credit({ searchParams }: { searchParams: any }) {
+
+    const [credit, setCredit] = useState<number>()
+
+    useEffect(() => {
+
+        socket.connect()
+
+        socket.once('connect', async () => {
+
+            const credits = await getCredits()
+            const user = JSON.parse(await getUser()) as UserResponse
+
+            if (credits.data?.length === 0) {
+                socket.emit('add-user-credit-table', { id: user.data.user?.id, email: user.data.user?.email })
+                setCredit(0)
+            }
+            else {
+                setCredit(credits.data![0].credit)
+            }
+        })
+
+        return () => {
+            socket.disconnect()
+        }
+    }, [])
 
     return (
         <section className="flex justify-center items-center w-full md:h-[calc(100vh_-_80px)] bg-[#FBFCFF]">
@@ -16,7 +46,7 @@ function Credit({ searchParams } : { searchParams : any }) {
                 <div className="flex h-full gap-6 flex-wrap">
                     <Box>
                         <div>
-                            <p className="text-center">0</p>
+                            <p className="text-center"> {credit !== undefined ? credit : 'Loading...'} </p>
                             Credits
                         </div>
                     </Box>
