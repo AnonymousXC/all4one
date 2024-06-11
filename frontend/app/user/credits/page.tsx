@@ -16,24 +16,25 @@ function Credit() {
     const searchParams = useSearchParams()
     const message = searchParams.get('message') || ''
 
+    socket.once('connect', async () => {
+
+        const credits = await getCredits()
+        const user = JSON.parse(await getUser()) as UserResponse
+
+        if (credits.data?.length === 0) {
+            socket.emit('add-user-credit-table', { id: user.data.user?.id, email: user.data.user?.email })
+            setCredit(0)
+        }
+        else {
+            setCredit(credits.data![0].credit)
+        }
+    })
+
+
     useEffect(() => {
 
         socket.connect()
-
-        socket.once('connect', async () => {
-
-            const credits = await getCredits()
-            const user = JSON.parse(await getUser()) as UserResponse
-
-            if (credits.data?.length === 0) {
-                socket.emit('add-user-credit-table', { id: user.data.user?.id, email: user.data.user?.email })
-                setCredit(0)
-            }
-            else {
-                setCredit(credits.data![0].credit)
-            }
-        })
-
+        
         return () => {
             socket.disconnect()
         }

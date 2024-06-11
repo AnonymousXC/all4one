@@ -69,7 +69,6 @@ function VideoCall() {
                             <div className="bg-[#FBFBFB] border border-[rgba(0, 0, 0, 0.1)] rounded-2xl px-6 py-6 flex items-center flex-col gap-8">
                                 <div className="flex w-full justify-between">
                                     <h3 className="text-xl font-bold">Good evening!</h3>
-                                    {/* <p> {date.toLocaleTimeString()} </p> */}
                                 </div>
                                 <VideoReceiver selfVideoRef={selfVideo} receiverVideoRef={otherVideo} />
                                 <VideoAudioRecorder callID={id} receiverID={secondUser} connectionFunc={() => {

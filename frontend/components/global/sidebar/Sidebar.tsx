@@ -1,8 +1,8 @@
 'use client'
 import { usePathname } from "next/navigation";
-import Button from "./Button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Tab from "./Tab";
 
 
 function Sidebar() {
@@ -26,18 +26,18 @@ function Sidebar() {
                 `}>
             {/* <h1>Logo</h1> */}
             <div className="flex flex-col gap-8 w-full mx-3">
-                <Button image="/icons/Home.svg" active={pathname == '/user/dashboard' ? true : false} redirector={() => { router.push('/user/dashboard') }}>
+                <Tab image="/icons/Home.svg" pathname={pathname} href="/user/dashboard" >
                     Dashboard
-                </Button>
-                <Button image="/icons/Credit.svg" active={pathname == '/user/credits' ? true : false} redirector={() => { router.push('/user/credits') }}>
+                </Tab>
+                <Tab image="/icons/Credit.svg" pathname={pathname} href="/user/credits" >
                     Credits
-                </Button>
-                <Button image="/icons/Settings video camera.svg" active={pathname == '/user/join' ? true : false} redirector={() => { router.push('/user/join') }}>
+                </Tab>
+                <Tab image="/icons/Settings video camera.svg" pathname={pathname} href="/user/join" >
                     Audio
-                </Button>
-                <Button image="/icons/Miniplayer.svg" active={pathname == '' ? true : false} redirector={() => { router.push('') }}>
+                </Tab>
+                <Tab image="/icons/Miniplayer.svg" pathname={pathname} href="/" >
                     Miniplayer
-                </Button>
+                </Tab>
             </div>
         </section>
     )
