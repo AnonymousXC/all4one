@@ -24,7 +24,6 @@ function Sidebar() {
                 md:relative md:max-w-[220px] md:h-screen md:top-0 md:w-full
                 bg-[#FAFBFF] justify-center items-center
                 `}>
-            {/* <h1>Logo</h1> */}
             <div className="flex flex-col gap-8 w-full mx-3">
                 <Tab image="/icons/Home.svg" pathname={pathname} href="/user/dashboard" >
                     Dashboard
@@ -34,9 +33,6 @@ function Sidebar() {
                 </Tab>
                 <Tab image="/icons/Settings video camera.svg" pathname={pathname} href="/user/join" >
                     Audio
-                </Tab>
-                <Tab image="/icons/Miniplayer.svg" pathname={pathname} href="/" >
-                    Miniplayer
                 </Tab>
             </div>
         </section>

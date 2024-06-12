@@ -7,12 +7,9 @@ type Props = {
 
 function MessageBox({ self, text }: Props) {
     return (
-        <div className="flex flex-col gap-1 px-10">
-            <div className={`flex gap-2 items-center ${self === true ? "flex-row-reverse" : ""} `}>
-                <img src="https://avatars3.githubusercontent.com/u/100200?s=460&v=4" className="w-10 h-10 rounded-full"></img>
-                <p className="text-[#8C8C8C]"> { self === true ? "Sophia" : "Josh" } </p>
-            </div>
-            <p className={`px-6 ${self === true ? "text-end" : ""}`}> {text} </p>
+        <div className={`flex flex-col gap-1 px-6 w-max py-3 rounded-2xl max-w-[90%] md:max-w-[700px] ${self === true ? "self-end bg-[#362360]" : "self-start bg-white"}`}>
+            <p className={`text-sm ${self === true ? "text-slate-300 text-end" : "text-start text-slate-600"}`}> {self === true ? "You" : "User 2"} </p>
+            <p className={`${self === true ? "text-white text-end" : ""}`}> {text} </p>
         </div>
     )
 }

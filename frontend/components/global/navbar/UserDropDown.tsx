@@ -23,12 +23,6 @@ function UserDropDown({ name } : { name : string }) {
                     }
                 </button>
                 <div className={`absolute bottom-0 top-full left-0 flex flex-col w-full bg-slate-200 rounded-2xl mt-2 overflow-hidden transition-all ${dropdown ? 'h-min' : 'h-0'}`}>
-                    <button className='py-3 hover:bg-slate-900 hover:text-white transition-colors bg-slate-200 rounded-t-2xl'>
-                        lorem
-                    </button>
-                    <button className='py-3 hover:bg-slate-900 hover:text-white transition-colors bg-slate-200'>
-                        lorem
-                    </button>
                     <button className='py-3 hover:bg-slate-900 hover:text-white transition-colors rounded-b-2xl bg-slate-200' 
                     onClick={() => { 
                         toast.info("Logging out.")

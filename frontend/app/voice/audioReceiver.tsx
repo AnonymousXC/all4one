@@ -117,7 +117,7 @@ function AudioReceiver() {
                 <p className={`dropdown flex-1 transition-all ${receiverSpeaking === true ? 'bg-[#362360] text-white' : ''}`}> {receiverServerLang} {receiverSpeaking === true ? "- Speaking..." : ""} </p>
             </div>
             <div className="w-full min-h-[350px] bg-main-purple rounded-2xl relative py-3">
-                <div className="flex flex-col gap-4 flex-1 overflow-y-auto max-h-[calc(350px-1rem)] scrollbar">
+                <div className="flex flex-col gap-4 flex-1 overflow-y-auto max-h-[calc(350px-1rem)] scrollbar px-4">
                     {
                         captions &&
                         captions.map((el: Captions, idx: number) => {
