@@ -8,6 +8,12 @@ const nextConfig = {
                 hostname: 'img.freepik.com'
             }
         ]
+    },
+    experimental: {
+        serverActions: {
+            allowedForwardedHosts: ['localhost'],
+            allowedOrigins: ['localhost:3000', 'translate.allforone.ai', 'api.allforone.ai']
+        },
     }
 };
 

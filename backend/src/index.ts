@@ -26,7 +26,7 @@ const port = process.env.PORT || 8081;
 const io: ServerType = new Server(server, {
   cors: {
     origin: (origin: string, callback: any) => {
-      if (["http://localhost:3000", "https://all4one.vercel.app"].includes(origin)) {
+      if (["http://localhost:3000", "https://all4one.vercel.app", "https://translate.allforone.ai"].includes(origin)) {
         callback(null, origin);
       }
     }
