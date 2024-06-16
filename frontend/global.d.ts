@@ -6,6 +6,7 @@ declare global {
         sidebar: boolean,
         setSidebar: Dispatch<SetStateAction<boolean>>,
         selfStream: MediaStream,
-        setCamera: Dispatch<SetStateAction<boolean>>
+        setCamera: Dispatch<SetStateAction<boolean>>,
+        setVideoCallConnection: Dispatch<SetStateAction<boolean>>
     }
 }

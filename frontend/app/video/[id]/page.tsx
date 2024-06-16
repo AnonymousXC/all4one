@@ -11,6 +11,7 @@ import { makeVideoCall, receiveCall } from "../CallFunctions";
 import dynamic from "next/dynamic";
 import Sidebar from "@/components/global/sidebar/Sidebar";
 import NavBarClientSide from "@/components/global/navbar/NavigationBarClient";
+import 'react-toastify/ReactToastify.css'
 
 const VideoAudioRecorder = dynamic(() => import("../VidAudioRecorder"), {ssr : false})
 

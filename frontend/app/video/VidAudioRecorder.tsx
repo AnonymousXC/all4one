@@ -77,6 +77,7 @@ function VideoAudioRecorder({ callID, connectionFunc, receiverID }: Props) {
 
     useEffect(() => {
         window.setCamera = setCamera
+        window.setVideoCallConnection = setConnection
         socket.once('new-user-joined', ({ userID, lang }: { userID: string, lang: any }) => {
             if (Object.keys(lang).length > 1)
                 setIsReceiver(true)
@@ -117,7 +118,6 @@ function VideoAudioRecorder({ callID, connectionFunc, receiverID }: Props) {
                             return
                         }
                         connectionFunc()
-                        setConnection(true)
                     }
                     else
                         endCall()
