@@ -20,7 +20,7 @@ function Dashboard() {
               <div className="flex flex-col gap-8 mt-8 w-full justify-center items-center md:flex-row">
                 <CallBox heading="Real time Telephone" image="/images/image1.jpg" onClick={() => { router.push('/user/join') }} />
                 <CallBox heading="Real time Video" image="/images/image2.jpg" onClick={() => { router.push('/user/join') }} />
-                <CallBox heading="Real time Physical" image="/images/image3.jpg" onClick={() => { router.push('/user/live') }} />
+                <CallBox heading="Real time Physical" image="/images/image3.jpg" onClick={() => { router.push('/app/realtime') }} />
               </div>
           </div>
         </div>

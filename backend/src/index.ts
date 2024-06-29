@@ -18,6 +18,7 @@ import SpeechStarted from "./events/speech/SpeechStarted";
 import SpeechEnd from "./events/speech/SpeechEnd";
 import updateCredits from "./database/updateCredits";
 import addToTable from "./database/addUserToTable";
+import ReceiveRealtime from "./realtime/receiveAudio";
 
 // Variables
 const app: Express = express();
@@ -59,6 +60,8 @@ io.on('connection', (socket: Socket) => {
   socket.on('speaking-end', SpeechEnd)
 
   socket.on('add-user-credit-table', addToTable)
+
+  socket.on('realtime-transcription', ReceiveRealtime)
   
 });
 
