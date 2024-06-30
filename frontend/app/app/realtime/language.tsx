@@ -1,14 +1,19 @@
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 
 type Props = {
     language: string,
-    handleLanguageChange: (e : FormEvent<HTMLSelectElement>) => any
+    handleLanguageChange: (e: FormEvent<HTMLSelectElement>) => any,
+    storageID: string
 }
 
-function LanguageSelect({ language, handleLanguageChange } : Props) {
+function LanguageSelect({ language, handleLanguageChange, storageID }: Props) {
     return (
         <div className="dropdown-wrapper">
-            <select className="dropdown" value={language} onChange={handleLanguageChange}>
+            <select className="dropdown" value={language}
+                onChange={(e) => {
+                    handleLanguageChange(e);
+                    localStorage.setItem(storageID, e.currentTarget.value)
+                }}>
                 <option value={0}>Choose your language</option>
                 <option value="en">English</option>
                 <option value="hi">Hindi</option>

@@ -25,7 +25,7 @@ const ReceiveRealtime = async function (this: Socket, data: Props) {
 
         const voice = await openai.audio.speech.create({
             model: 'tts-1',
-            voice: 'alloy',
+            voice: 'nova',
             input: translation || ''
         })
 
@@ -36,6 +36,7 @@ const ReceiveRealtime = async function (this: Socket, data: Props) {
 
     catch (err) {
         console.log(err)
+        socket.emit('realtime-status', { text: 'Error occured.' })
     }
 }
 

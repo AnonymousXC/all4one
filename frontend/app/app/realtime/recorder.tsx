@@ -18,23 +18,28 @@ function AudioRecorder(props: Props) {
     useEffect(() => {
 
         (async () => {
-            let stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-            let recorderLoc = new RecordRTCPromisesHandler(stream, {
-                type: 'audio',
-                mimeType: 'audio/wav',
-                recorderType: MediaStreamRecorder,
-                disableLogs: true,
-                timeSlice: 15200,
-                ondataavailable: async (_blob) => {
-                    const buffer = Buffer.from(await _blob.arrayBuffer())
-                    socket.emit("realtime-transcription", {
-                        audio: buffer,
-                        ...props
-                    })
-                }
-
-            });
-            setRecorder(recorderLoc)
+            try {
+                let stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+                let recorderLoc = new RecordRTCPromisesHandler(stream, {
+                    type: 'audio',
+                    mimeType: 'audio/wav',
+                    recorderType: MediaStreamRecorder,
+                    disableLogs: true,
+                    timeSlice: 15200,
+                    ondataavailable: async (_blob) => {
+                        const buffer = Buffer.from(await _blob.arrayBuffer())
+                        socket.emit("realtime-transcription", {
+                            audio: buffer,
+                            ...props
+                        })
+                    }
+    
+                });
+                setRecorder(recorderLoc)
+            }
+            catch(err) {
+                console.log(err)
+            }
         })()
 
     }, [props])
